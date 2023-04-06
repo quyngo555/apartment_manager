@@ -10,7 +10,9 @@ import jakarta.persistence.ManyToOne;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Data
@@ -21,6 +23,9 @@ public class ServiceDetail extends BaseEntity {
   private String unit;
   private String note;
   private  TypeService name;
-  @ManyToMany(mappedBy = "serviceDetails")
-  private Set<Bill> bills;
+  @ManyToOne
+  @JoinColumn(name = "bill_id")
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
+  private Bill bills;
 }

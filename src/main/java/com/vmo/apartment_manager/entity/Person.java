@@ -1,9 +1,10 @@
 package com.vmo.apartment_manager.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import java.sql.Date;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,11 +24,10 @@ public class Person extends BaseEntity{
   private Boolean gender;
   private String carrer;
   private Integer idParent;
-  private Integer idChild;
 
-  @ManyToOne
-  @JoinColumn(name = "lease_id")
-  @EqualsAndHashCode.Exclude
+
+  @OneToMany(mappedBy = "persons", cascade = CascadeType.ALL)
   @ToString.Exclude
-  private Lease lease;
+  @EqualsAndHashCode.Exclude
+  private List<Contract> contracts;
 }

@@ -12,6 +12,5 @@ public abstract class BaseEntity {
   private Long id;
   private Timestamp createdDate;
   private Timestamp modifiedDate;
-  private String createdBy;
-  private String modifiedBy;
+  private Long idUser;
 }

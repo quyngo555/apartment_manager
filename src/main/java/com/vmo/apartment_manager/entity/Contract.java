@@ -17,7 +17,7 @@ import lombok.ToString;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Lease extends BaseEntity{
+public class Contract extends BaseEntity{
 
   private double priceApartment;
 
@@ -29,17 +29,18 @@ public class Lease extends BaseEntity{
 
   private Long idUser;
 
-  private Boolean status;
+  private Integer status;
 
   @OneToMany(mappedBy = "lease", cascade = CascadeType.ALL)
   @ToString.Exclude
   @EqualsAndHashCode.Exclude
   private List<Bill> bills;
 
-  @OneToMany(mappedBy = "", cascade = CascadeType.ALL)
-  @ToString.Exclude
+  @ManyToOne
+  @JoinColumn(name = "lease_id")
   @EqualsAndHashCode.Exclude
-  private List<Person> persons;
+  @ToString.Exclude
+  private Person persons;
 
   @ManyToOne
   @JoinColumn(name = "apartment_id")

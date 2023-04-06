@@ -24,7 +24,7 @@ public class Bill extends BaseEntity {
   private List<ServiceDetail> serviceDetails;
 
   @ManyToOne
-  @JoinColumn(name = "lease_id")
+  @JoinColumn(name = "contract_id")
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
   private Contract contract;

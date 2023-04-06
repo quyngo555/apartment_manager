@@ -10,13 +10,14 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
+@Setter
 public class Contract extends BaseEntity{
 
   private double priceApartment;
@@ -31,20 +32,14 @@ public class Contract extends BaseEntity{
 
   private Integer status;
 
-  @OneToMany(mappedBy = "lease", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "contract", cascade = CascadeType.ALL)
   @ToString.Exclude
   @EqualsAndHashCode.Exclude
   private List<Bill> bills;
 
   @ManyToOne
-  @JoinColumn(name = "lease_id")
+  @JoinColumn(name = "person_id")
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
   private Person persons;
-
-  @ManyToOne
-  @JoinColumn(name = "apartment_id")
-  @EqualsAndHashCode.Exclude
-  @ToString.Exclude
-  private Apartment apartment;
 }

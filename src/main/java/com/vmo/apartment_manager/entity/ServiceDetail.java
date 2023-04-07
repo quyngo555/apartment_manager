@@ -22,11 +22,18 @@ import lombok.ToString;
 public class ServiceDetail extends BaseEntity {
   private Double price;
   private String unit;
+  private int nextNum;
+  private int previousNum;
   private String note;
   private  TypeService name;
+  private Double fee;
   @ManyToOne
   @JoinColumn(name = "bill_id")
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
-  private Bill bills;
+  private Bill bill;
+
+  public void caculateFee(){
+    this.fee = (nextNum - previousNum) * price;
+  }
 }

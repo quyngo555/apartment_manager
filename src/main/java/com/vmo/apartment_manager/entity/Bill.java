@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import java.sql.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,7 +19,11 @@ import lombok.ToString;
 @NoArgsConstructor
 public class Bill extends BaseEntity {
 
-  @OneToMany(mappedBy = "bills", cascade = CascadeType.ALL)
+  private Double total;
+  private int stauts;
+  private Date dateOfPayment;
+
+  @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL)
   @ToString.Exclude
   @EqualsAndHashCode.Exclude
   private List<ServiceDetail> serviceDetails;

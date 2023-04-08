@@ -35,4 +35,12 @@ public class PersonController {
   public ResponseEntity<?> update(@PathVariable("id") long id, @RequestBody Person person){
     return ResponseEntity.ok(personService.update(id, person));
   }
+  @PutMapping("/{id}/change-status")
+  public ResponseEntity<?> changeStatus(@PathVariable("id")long id){
+    return ResponseEntity.ok(personService.deletePersonById(id));
+  }
+  @PutMapping("/change-status")
+  public ResponseEntity<?> changeAllStatus(@RequestBody long []ids){
+    return ResponseEntity.ok(personService.deletePersonsById(ids));
+  }
 }

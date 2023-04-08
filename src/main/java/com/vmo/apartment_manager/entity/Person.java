@@ -17,5 +17,6 @@ public class Person extends BaseEntity{
   private Boolean gender;
   private String carrer;
   private Long idParent;
+  private Integer status;
 
 }

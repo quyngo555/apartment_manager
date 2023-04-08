@@ -8,4 +8,6 @@ public interface ContractService {
   Contract update(Long id, Contract contract);
   Contract findById(Long id);
   List<Contract> getAll();
+  String changeStatusById(long id);
+  String changeAllStatusByIds(long[] ids);
 }

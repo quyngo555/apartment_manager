@@ -18,6 +18,7 @@ public class PersonDto {
   private String carrer;
   private Long idParent;
   private String apartmentName;
+  private Integer status;
 
   public PersonDto(Person person, String apartmentName) {
     this.id = person.getId();
@@ -30,5 +31,6 @@ public class PersonDto {
     this.carrer = person.getCarrer();
     this.idParent = person.getIdParent();
     this.apartmentName = apartmentName;
+    this.status = person.getStatus();
   }
 }

@@ -39,4 +39,13 @@ public class ContractController {
     return ResponseEntity.ok(contractService.update(id, contract));
   }
 
+  @PutMapping("/{id}/change-status")
+  public ResponseEntity<?> changeStatus(@PathVariable("id") long id){
+    return ResponseEntity.ok(contractService.changeStatusById(id));
+  }
+  @PutMapping("/change-status")
+  public ResponseEntity<?> changeAllStatusByIds(@RequestBody long[] ids){
+    return ResponseEntity.ok(contractService.changeAllStatusByIds(ids));
+  }
+
 }

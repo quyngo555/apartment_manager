@@ -7,6 +7,8 @@ import com.vmo.apartment_manager.repository.ApartmentRepository;
 import com.vmo.apartment_manager.repository.ContractRepository;
 import com.vmo.apartment_manager.repository.PersonRepository;
 import com.vmo.apartment_manager.service.ContractService;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -63,5 +65,25 @@ public class ContractServiceImpl implements ContractService {
   @Override
   public List<Contract> getAll() {
     return contractRepo.findAll();
+  }
+
+  @Override
+  public String changeStatusById(long id) {
+    Contract contract = contractRepo.findById(id).orElseThrow(() ->{
+      throw new NotFoundException(ConstantError.CONTRACT_NOT_FOUND + id);
+    });
+    contract.setStatus(0);
+    contractRepo.save(contract);
+    return "Change status succedd!";
+  }
+
+  @Override
+  public String changeAllStatusByIds(long[] ids) {
+    for(long id: ids){
+      Contract contract = contractRepo.findByIdPerson(id);
+      contract.setStatus(0);
+      contractRepo.save(contract);
+    }
+    return "Change status succedd!";
   }
 }

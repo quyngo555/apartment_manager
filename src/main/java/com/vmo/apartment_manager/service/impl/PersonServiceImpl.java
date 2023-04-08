@@ -2,12 +2,15 @@ package com.vmo.apartment_manager.service.impl;
 
 import com.vmo.apartment_manager.constant.ConstantError;
 import com.vmo.apartment_manager.dto.PersonDto;
+import com.vmo.apartment_manager.entity.Contract;
 import com.vmo.apartment_manager.entity.Person;
 import com.vmo.apartment_manager.exception.NotFoundException;
 import com.vmo.apartment_manager.repository.ApartmentRepository;
+import com.vmo.apartment_manager.repository.ContractRepository;
 import com.vmo.apartment_manager.repository.PersonRepository;
 import com.vmo.apartment_manager.service.PersonService;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +23,9 @@ public class PersonServiceImpl implements PersonService {
 
   @Autowired
   ApartmentRepository apartmentRepo;
+
+  @Autowired
+  ContractRepository contractRepo;
 
   @Override
   public PersonDto add(Person person) {
@@ -83,5 +89,28 @@ public class PersonServiceImpl implements PersonService {
       personDtos.add(new PersonDto(person, apartmentName));
     }
     return personDtos;
+  }
+
+  @Override
+  public String deletePersonById(Long id) {
+    Person person = personRepo.findById(id).orElseThrow(() -> {
+      throw new NotFoundException(ConstantError.PERSON_NOT_FOUND + id);
+    });
+    person.setStatus(0);
+    Contract contract = contractRepo.findByIdPerson(person.getId());
+    contract.setStatus(0);
+    contractRepo.save(contract);
+    personRepo.save(person);
+    return "Delete Succedd.";
+  }
+
+  @Override
+  public String deletePersonsById(long[] ids) {
+    for(long id: ids){
+      Person person = personRepo.findById(id).get();
+      person.setStatus(0);
+      personRepo.save(person);
+    }
+    return "Delete succedd!";
   }
 }

@@ -16,6 +16,6 @@ public class Person extends BaseEntity{
   private String cin;
   private Boolean gender;
   private String carrer;
-  private Integer idParent;
+  private Long idParent;
 
 }

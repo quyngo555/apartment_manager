@@ -7,5 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ServiceDetailRepository extends JpaRepository<ServiceDetail, Long> {
-  List<ServiceDetail> findAllByBillId(long id);
+  List<ServiceDetail> findAllByBillId(Long id);
+
 }

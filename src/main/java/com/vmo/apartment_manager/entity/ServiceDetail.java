@@ -27,7 +27,7 @@ public class ServiceDetail extends BaseEntity {
   private String note;
   private  TypeService name;
   private Double fee;
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "bill_id")
   @EqualsAndHashCode.Exclude
   @ToString.Exclude

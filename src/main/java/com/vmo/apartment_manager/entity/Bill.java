@@ -10,11 +10,14 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Bill extends BaseEntity {
@@ -23,15 +26,11 @@ public class Bill extends BaseEntity {
   private int stauts;
   private Date dateOfPayment;
 
-  @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL)
-  @ToString.Exclude
-  @EqualsAndHashCode.Exclude
-  private List<ServiceDetail> serviceDetails;
-
   @ManyToOne
   @JoinColumn(name = "contract_id")
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
   private Contract contract;
+
 
 }

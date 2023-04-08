@@ -3,11 +3,14 @@ package com.vmo.apartment_manager.service.impl;
 import com.vmo.apartment_manager.constant.ConstantError;
 import com.vmo.apartment_manager.entity.ServiceDetail;
 import com.vmo.apartment_manager.exception.NotFoundException;
+import com.vmo.apartment_manager.repository.BillRepository;
 import com.vmo.apartment_manager.repository.ServiceDetailRepository;
+import com.vmo.apartment_manager.service.BillService;
 import com.vmo.apartment_manager.service.ServiceDetailService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.vmo.apartment_manager.entity.Bill;
 
 @Service
 public class ServiceDetailServiceImpl implements ServiceDetailService {
@@ -15,9 +18,21 @@ public class ServiceDetailServiceImpl implements ServiceDetailService {
   @Autowired
   ServiceDetailRepository serviceDetailRepo;
 
+  @Autowired
+  BillRepository billRepo;
+
+  @Autowired
+  BillService billService;
+
   @Override
   public ServiceDetail add(ServiceDetail service) {
-    return serviceDetailRepo.save(service);
+    service.caculateFee();
+    ServiceDetail serviceDetail = serviceDetailRepo.save(service);
+    Bill bill = billRepo.findById(serviceDetail.getBill().getId()).get();
+    bill.setTotal(billService.getTotalFee(bill));
+
+    billService.update(bill.getId(), bill);
+    return serviceDetail;
   }
 
   @Override

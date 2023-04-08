@@ -5,10 +5,11 @@ import com.vmo.apartment_manager.entity.Bill;
 import java.util.List;
 
 public interface BillService {
-  Bill add(Bill bill);
+  BillDto add(Bill bill);
   BillDto update(Long id, Bill bill);
   BillDto findById(long id);
-  List<BillDto> getAllBill();
+  List<BillDto> getAllBill(Integer pageNo, Integer pageSize, String sortBy);
   Double getTotalFee(Bill bill);
+  List<BillDto> getBillsByApartmentId(long apartmentId);
 
 }

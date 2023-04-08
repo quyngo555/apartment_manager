@@ -7,7 +7,8 @@ public interface ContractService {
   Contract add(Contract contract);
   Contract update(Long id, Contract contract);
   Contract findById(Long id);
-  List<Contract> getAll();
+  List<Contract> getAll(Integer pageNo, Integer pageSize, String sortBy);
   String changeStatusById(long id);
   String changeAllStatusByIds(long[] ids);
+  List<Contract> findAllByApartmentId(long id);
 }

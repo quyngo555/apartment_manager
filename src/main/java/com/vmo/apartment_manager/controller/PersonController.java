@@ -10,37 +10,60 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("api/persons")
+@RequestMapping("api")
 public class PersonController {
 
   @Autowired
   private PersonService personService;
 
-  @GetMapping("")
-  public ResponseEntity<?> getAll(){
-    return ResponseEntity.ok(personService.getAll());
+  @GetMapping("/persons")
+  public ResponseEntity<?> getAll(@RequestParam(defaultValue = "0") Integer pageNo,
+      @RequestParam(defaultValue = "10") Integer pageSize,
+      @RequestParam(defaultValue = "id") String sortBy){
+    return ResponseEntity.ok(personService.getAll(pageNo, pageSize, sortBy));
   }
-  @GetMapping("/{id}")
+  @GetMapping("/persons/{id}")
   public ResponseEntity<?> findById(@PathVariable("id") long id){
     return ResponseEntity.ok(personService.findById(id));
   }
-  @PostMapping("")
+  @PostMapping("/persons")
   public ResponseEntity<?> add(@RequestBody Person person){
     return ResponseEntity.ok(personService.add(person));
   }
-  @PutMapping("/{id}")
+  @PutMapping("/persons/{id}")
   public ResponseEntity<?> update(@PathVariable("id") long id, @RequestBody Person person){
     return ResponseEntity.ok(personService.update(id, person));
   }
-  @PutMapping("/{id}/change-status")
+  @PutMapping("persons/{id}/change-status")
   public ResponseEntity<?> changeStatus(@PathVariable("id")long id){
     return ResponseEntity.ok(personService.deletePersonById(id));
   }
-  @PutMapping("/change-status")
+  @PutMapping("/persons/change-status")
   public ResponseEntity<?> changeAllStatus(@RequestBody long []ids){
     return ResponseEntity.ok(personService.deletePersonsById(ids));
+  }
+  @GetMapping("/apartments/{id}/persons")
+  public ResponseEntity<?> getAllByApartmentId(@PathVariable("id") long id,@RequestParam(defaultValue = "0") Integer pageNo,
+      @RequestParam(defaultValue = "10") Integer pageSize,
+      @RequestParam(defaultValue = "id") String sortBy){
+    return ResponseEntity.ok(personService.getAllByApartmentId(id, pageNo, pageSize, sortBy));
+  }
+
+  @GetMapping("/apartments/{id}/persons-active")
+  public ResponseEntity<?> getPersonsActiveByApartmentId(@PathVariable("id") long id, @RequestParam(defaultValue = "0") Integer pageNo,
+      @RequestParam(defaultValue = "10") Integer pageSize,
+      @RequestParam(defaultValue = "id") String sortBy){
+    return ResponseEntity.ok(personService.getAllByApartmentId(id, pageNo, pageSize, sortBy));
+  }
+
+  @GetMapping("/apartments/{id}/persons-un-active")
+  public ResponseEntity<?> getPersonsUnActiveByApartmentId(@PathVariable("id") long id, @RequestParam(defaultValue = "0") Integer pageNo,
+      @RequestParam(defaultValue = "10") Integer pageSize,
+      @RequestParam(defaultValue = "id") String sortBy){
+    return ResponseEntity.ok(personService.getAllByApartmentId(id, pageNo, pageSize, sortBy));
   }
 }

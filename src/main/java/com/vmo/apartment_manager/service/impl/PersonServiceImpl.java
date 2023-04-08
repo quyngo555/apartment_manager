@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -58,8 +61,9 @@ public class PersonServiceImpl implements PersonService {
   }
 
   @Override
-  public List<PersonDto> getAll() {
-    List<Person> personList = personRepo.findAll();
+  public List<PersonDto> getAll(Integer pageNo, Integer pageSize, String sortBy) {
+    Pageable paging = PageRequest.of(pageNo-1, pageSize, Sort.by(sortBy));
+    List<Person> personList = personRepo.findAll(paging).getContent();
     List<PersonDto> personDtos = new ArrayList<>();
     for(Person person : personList){
       String apartmentName = apartmentRepo.getApartmentNameByIdPerson(person.getId());
@@ -80,13 +84,39 @@ public class PersonServiceImpl implements PersonService {
   }
 
   @Override
-  public List<PersonDto> getAllByApartmentId(Long id) {
-
-    List<Person> personList = personRepo.findAll();
+  public List<PersonDto> getAllByApartmentId(Long id, Integer pageNo, Integer pageSize, String sortBy) {
+    Pageable paging = PageRequest.of(pageNo-1, pageSize, Sort.by(sortBy));
+    List<Person> personList = personRepo.findAll(paging).getContent();
     List<PersonDto> personDtos = new ArrayList<>();
     for(Person person : personList){
       String apartmentName = apartmentRepo.getApartmentNameByIdPerson(person.getId());
       personDtos.add(new PersonDto(person, apartmentName));
+    }
+    return personDtos;
+  }
+
+  @Override
+  public List<PersonDto> getPersonsActiveByApartmentId(long id, Integer pageNo, Integer pageSize, String sortBy) {
+    Pageable paging = PageRequest.of(pageNo-1, pageSize, Sort.by(sortBy));
+    List<Person> personList = personRepo.findAll(paging).getContent();
+    List<PersonDto> personDtos = new ArrayList<>();
+    for(Person person : personList){
+      String apartmentName = apartmentRepo.getApartmentNameByIdPerson(person.getId());
+      if(person.getStatus() == 1)
+        personDtos.add(new PersonDto(person, apartmentName));
+    }
+    return personDtos;
+  }
+
+  @Override
+  public List<PersonDto> getPersonsUnActiveByApartmentId(long id, Integer pageNo, Integer pageSize, String sortBy) {
+    Pageable paging = PageRequest.of(pageNo-1, pageSize, Sort.by(sortBy));
+    List<Person> personList = personRepo.findAll(paging).getContent();
+    List<PersonDto> personDtos = new ArrayList<>();
+    for(Person person : personList){
+      String apartmentName = apartmentRepo.getApartmentNameByIdPerson(person.getId());
+      if(person.getStatus() == 0)
+        personDtos.add(new PersonDto(person, apartmentName));
     }
     return personDtos;
   }

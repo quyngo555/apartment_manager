@@ -7,7 +7,7 @@ import java.util.List;
 public interface ApartmentService {
   Apartment add(Apartment apartment);
   Apartment update(Long id, Apartment apartment);
-  List<ApartmentDto> getAll();
+  List<ApartmentDto> getAll(Integer pageNo, Integer pageSize, String sortBy);
   Apartment findById(Long id);
 
 }

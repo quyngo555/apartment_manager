@@ -10,42 +10,49 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/contracts")
+@RequestMapping("/api")
 public class ContractController {
 
   @Autowired
   ContractService contractService;
 
-  @GetMapping("")
-  public ResponseEntity<?> getAll(){
-    return ResponseEntity.ok(contractService.getAll());
+  @GetMapping("/contracts")
+  public ResponseEntity<?> getAll(@RequestParam(defaultValue = "0") Integer pageNo,
+      @RequestParam(defaultValue = "10") Integer pageSize,
+      @RequestParam(defaultValue = "id") String sortBy){
+    return ResponseEntity.ok(contractService.getAll(pageNo, pageSize, sortBy));
   }
 
-  @GetMapping("/{id}")
+  @GetMapping("/contracts/{id}")
   public ResponseEntity<?> findById(@PathVariable("id") long id){
     return ResponseEntity.ok(contractService.findById(id));
   }
 
-  @PostMapping("")
+  @PostMapping("/contracts")
   public ResponseEntity<?> add(@RequestBody Contract contract){
     return ResponseEntity.ok(contractService.add(contract));
   }
 
-  @PutMapping("/{id}")
+  @PutMapping("/contracts/{id}")
   public ResponseEntity<?> update(@PathVariable("id") long id, @RequestBody Contract contract){
     return ResponseEntity.ok(contractService.update(id, contract));
   }
 
-  @PutMapping("/{id}/change-status")
+  @PutMapping("/contracts/{id}/change-status")
   public ResponseEntity<?> changeStatus(@PathVariable("id") long id){
     return ResponseEntity.ok(contractService.changeStatusById(id));
   }
-  @PutMapping("/change-status")
+  @PutMapping("/contracts/change-status")
   public ResponseEntity<?> changeAllStatusByIds(@RequestBody long[] ids){
     return ResponseEntity.ok(contractService.changeAllStatusByIds(ids));
+  }
+  @GetMapping("apartments/{id}/contracts")
+  public ResponseEntity<?> getContractsByApartmentId(@PathVariable("id") long id){
+    return ResponseEntity.ok(contractService.findAllByApartmentId(id));
   }
 
 }

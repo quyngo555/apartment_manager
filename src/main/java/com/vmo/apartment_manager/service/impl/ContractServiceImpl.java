@@ -11,6 +11,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -63,8 +66,9 @@ public class ContractServiceImpl implements ContractService {
   }
 
   @Override
-  public List<Contract> getAll() {
-    return contractRepo.findAll();
+  public List<Contract> getAll(Integer pageNo, Integer pageSize, String sortBy) {
+    Pageable paging = PageRequest.of(pageNo-1, pageSize, Sort.by(sortBy));
+    return contractRepo.findAll(paging).getContent();
   }
 
   @Override
@@ -85,5 +89,10 @@ public class ContractServiceImpl implements ContractService {
       contractRepo.save(contract);
     }
     return "Change status succedd!";
+  }
+
+  @Override
+  public List<Contract> findAllByApartmentId(long id) {
+    return contractRepo.findAllByApartmentId(id);
   }
 }

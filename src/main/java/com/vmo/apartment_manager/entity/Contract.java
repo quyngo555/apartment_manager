@@ -35,4 +35,6 @@ public class Contract extends BaseEntity{
   @EqualsAndHashCode.Exclude
   @ToString.Exclude
   private Person person;
+
+
 }

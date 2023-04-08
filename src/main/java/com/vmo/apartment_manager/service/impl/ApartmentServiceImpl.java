@@ -10,6 +10,9 @@ import com.vmo.apartment_manager.service.ApartmentService;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import com.vmo.apartment_manager.entity.Person;
 
@@ -42,8 +45,9 @@ public class ApartmentServiceImpl implements ApartmentService {
   }
 
   @Override
-  public List<ApartmentDto> getAll() {
-    List<Apartment> apartments = apartmentRepo.findAll();
+  public List<ApartmentDto> getAll(Integer pageNo, Integer pageSize, String sortBy) {
+    Pageable paging = PageRequest.of(pageNo-1, pageSize, Sort.by(sortBy));
+    List<Apartment> apartments = apartmentRepo.findAll(paging).getContent();
     List<ApartmentDto> apartmentDtos = new ArrayList<>();
     for(Apartment apartment:apartments){
       List<Person> persons = personRepo.findAllByApartmentId(apartment.getId());

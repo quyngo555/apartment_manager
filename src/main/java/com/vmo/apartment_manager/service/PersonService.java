@@ -8,9 +8,11 @@ import java.util.List;
 public interface PersonService {
   PersonDto add(Person person);
   PersonDto update(Long id, Person person);
-  List<PersonDto> getAll();
+  List<PersonDto> getAll(Integer pageNo, Integer pageSize, String sortBy);
   PersonDto findById(Long id);
-  List<PersonDto> getAllByApartmentId(Long id);
+  List<PersonDto> getAllByApartmentId(Long id,Integer pageNo, Integer pageSize, String sortBy);
+  List<PersonDto> getPersonsActiveByApartmentId(long id, Integer pageNo, Integer pageSize, String sortBy);
+  List<PersonDto> getPersonsUnActiveByApartmentId(long id, Integer pageNo, Integer pageSize, String sortBy);
   String deletePersonById(Long id);
   String deletePersonsById(long[] ids);
 }

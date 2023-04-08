@@ -13,6 +13,9 @@ import com.vmo.apartment_manager.service.BillService;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,10 +31,10 @@ public class BillServiceImpl implements BillService {
   ContractRepository contractRepo;
 
   @Override
-  public Bill add(Bill bill) {
+  public BillDto add(Bill bill) {
     bill.setStauts(0);
     bill = billRepo.save(bill);
-    return bill;
+    return new BillDto(bill);
   }
 
   @Override
@@ -44,14 +47,10 @@ public class BillServiceImpl implements BillService {
     bill1.setDateOfPayment(bill.getDateOfPayment());
     bill1 = billRepo.save(bill1);
 
-    BillDto billDto = new BillDto();
-    billDto.setId(bill.getId());
-    billDto.setTotal(bill1.getTotal());
-    billDto.setStauts(bill.getStauts());
-    billDto.setFeeRentApartment(bill.getContract().getPriceApartment());
-    billDto.setServiceDetailList(serviceDetailRepo.findAllByBillId(bill.getId()).stream()
+    List<ServiceDto> serviceDtos = serviceDetailRepo.findAllByBillId(bill.getId()).stream()
         .map(ServiceDto::new)
-        .toList());
+        .toList();
+    BillDto billDto = new BillDto(bill1, serviceDtos);
     return billDto;
   }
 
@@ -60,30 +59,23 @@ public class BillServiceImpl implements BillService {
     Bill bill =  billRepo.findById(id).orElseThrow(() ->{
       throw new NotFoundException(ConstantError.CONTRACT_NOT_FOUND + id);
     });
-    BillDto dto = new BillDto();
-    dto.setId(bill.getId());
-    dto.setTotal(bill.getTotal());
-    dto.setStauts(bill.getStauts());
-    dto.setFeeRentApartment(bill.getContract().getPriceApartment());
-    dto.setServiceDetailList(serviceDetailRepo.findAllByBillId(bill.getId()).stream()
+    List<ServiceDto> serviceDtos = serviceDetailRepo.findAllByBillId(bill.getId()).stream()
         .map(ServiceDto::new)
-        .toList());
-    return dto;
+        .toList();
+    BillDto billDto = new BillDto(bill, serviceDtos);
+    return billDto;
   }
 
   @Override
-  public List<BillDto> getAllBill() {
-    List<Bill> bills =  billRepo.findAll();
+  public List<BillDto> getAllBill(Integer pageNo, Integer pageSize, String sortBy) {
+    Pageable paging = PageRequest.of(pageNo-1, pageSize, Sort.by(sortBy));
+    List<Bill> bills =  billRepo.findAll(paging).getContent();
     List<BillDto> billDtos = new ArrayList<>();
     for(Bill bill: bills){
-      BillDto dto = new BillDto();
-      dto.setId(bill.getId());
-      dto.setTotal(bill.getTotal());
-      dto.setStauts(bill.getStauts());
-      dto.setFeeRentApartment(bill.getContract().getPriceApartment());
-      dto.setServiceDetailList(serviceDetailRepo.findAllByBillId(bill.getId()).stream()
+      List<ServiceDto> serviceDtos = serviceDetailRepo.findAllByBillId(bill.getId()).stream()
           .map(ServiceDto::new)
-          .toList());
+          .toList();
+      BillDto dto = new BillDto(bill, serviceDtos);
       billDtos.add(dto);
     }
     return billDtos;
@@ -91,7 +83,6 @@ public class BillServiceImpl implements BillService {
 
   public Double getTotalFee(Bill bill){
     Double total = (double) 0;
-    System.out.println(bill.getId());
     if(serviceDetailRepo.findAllByBillId(bill.getId()) == null) return total;
     List<ServiceDetail> serviceDetails = serviceDetailRepo.findAllByBillId(bill.getId());
     for(ServiceDetail serviceDetail : serviceDetails){
@@ -99,6 +90,20 @@ public class BillServiceImpl implements BillService {
     }
     total += bill.getContract().getPriceApartment();
     return total;
+  }
+
+  @Override
+  public List<BillDto> getBillsByApartmentId(long apartmentId) {
+    List<Bill> bills = billRepo.getBillsByApartmentId(apartmentId);
+    List<BillDto> billDtos = new ArrayList<>();
+    for(Bill bill: bills){
+      List<ServiceDto> serviceDtos = serviceDetailRepo.findAllByBillId(bill.getId()).stream()
+          .map(ServiceDto::new)
+          .toList();
+      BillDto  dto = new BillDto(bill, serviceDtos);
+      billDtos.add(dto);
+    }
+    return billDtos;
   }
 
 }

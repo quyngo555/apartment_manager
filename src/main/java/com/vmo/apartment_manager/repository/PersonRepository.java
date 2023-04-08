@@ -8,5 +8,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PersonRepository extends JpaRepository<Person, Long> {
+  @Query(value = "select p from Person p "
+      + "left join Contract c on c.person.id = p.id and c.status = 1 "
+      + "inner join Apartment a on ?1 = c.apartment.id")
+  List<Person> findAllByApartmentId(Long idApartment);
+
 
 }

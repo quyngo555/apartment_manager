@@ -1,19 +1,26 @@
 package com.vmo.apartment_manager.service.impl;
 
 import com.vmo.apartment_manager.constant.ConstantError;
+import com.vmo.apartment_manager.dto.ApartmentDto;
 import com.vmo.apartment_manager.entity.Apartment;
 import com.vmo.apartment_manager.exception.NotFoundException;
 import com.vmo.apartment_manager.repository.ApartmentRepository;
+import com.vmo.apartment_manager.repository.PersonRepository;
 import com.vmo.apartment_manager.service.ApartmentService;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.vmo.apartment_manager.entity.Person;
 
 @Service
 public class ApartmentServiceImpl implements ApartmentService {
 
   @Autowired
   ApartmentRepository apartmentRepo;
+
+  @Autowired
+  PersonRepository personRepo;
 
   @Override
   public Apartment add(Apartment apartment) {
@@ -35,8 +42,30 @@ public class ApartmentServiceImpl implements ApartmentService {
   }
 
   @Override
-  public List<Apartment> getAll() {
-    return apartmentRepo.findAll();
+  public List<ApartmentDto> getAll() {
+    List<Apartment> apartments = apartmentRepo.findAll();
+    List<ApartmentDto> apartmentDtos = new ArrayList<>();
+    for(Apartment apartment:apartments){
+      List<Person> persons = personRepo.findAllByApartmentId(apartment.getId());
+
+      ApartmentDto dto = new ApartmentDto();
+      for(Person person: persons){
+        if(person.getIdParent()!= null){
+          dto.setOwnerApartmentName(personRepo.findById(person.getIdParent()).get().getFullName());
+          break;
+        }else{
+          dto.setOwnerApartmentName(personRepo.findById(person.getId()).get().getFullName());
+          break;
+        }
+      }
+      dto.setId(apartment.getId());
+      dto.setStatus(apartment.getStatus());
+      dto.setArea(apartment.getArea());
+      dto.setApartmentName(apartment.getName());
+      dto.setPersonInApartment(persons.size());
+      apartmentDtos.add(dto);
+    }
+    return apartmentDtos;
   }
 
   @Override

@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ServiceDetailService {
 
-  ServiceDto add(ServiceDetail service);
+  ServiceDto add(long billId, ServiceDetail service);
   ServiceDto update(Long id, ServiceDetail serviceDetail);
   ServiceDto findById(long id);
   List<ServiceDto> getAll(Integer pageNo, Integer pageSize, String sortBy);

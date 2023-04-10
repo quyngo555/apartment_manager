@@ -2,6 +2,7 @@ package com.vmo.apartment_manager.service.impl;
 
 import com.vmo.apartment_manager.constant.ConstantError;
 import com.vmo.apartment_manager.dto.PersonDto;
+import com.vmo.apartment_manager.dto.PersonRequest;
 import com.vmo.apartment_manager.entity.Contract;
 import com.vmo.apartment_manager.entity.Person;
 import com.vmo.apartment_manager.exception.NotFoundException;
@@ -30,12 +31,29 @@ public class PersonServiceImpl implements PersonService {
   @Autowired
   ContractRepository contractRepo;
 
+
+
   @Override
-  public PersonDto add(Person person) {
+  public PersonDto add(PersonRequest person) {
+    Person person1 = new Person();
+    Contract contract = contractRepo.getContractByApartmentId(person.getApartmentId());
+    if(contract == null){
+      person1.setIdParent(null);
+    }else{
+      person1.setIdParent(personRepo.getrepresentIdByApartmentId(person.getApartmentId()));
+    }
     if(person.getIdParent() == null && (person.getEmail() == null || person.getPhone() == null))
       throw new NotFoundException(ConstantError.LACK_OF_EMAIL_PHONE);
-    Person person1 = personRepo.save(person);
+    person1.setStatus(1);
+    person1.setCin(person.getCin());
+    person1.setDob(person.getDob());
+    person1.setCarrer(person.getCarrer());
+    person1.setGender(person.getGender());
+    person1.setFullName(person.getFullName());
+    person1.setPhone(person.getPhone());
+    person1.setEmail(person.getEmail());
     String apartmentName = apartmentRepo.getApartmentNameByIdPerson(person1.getId());
+    person1 = personRepo.save(person1);
     PersonDto personDto = new PersonDto(person1, apartmentName);
     return personDto;
   }
@@ -86,7 +104,9 @@ public class PersonServiceImpl implements PersonService {
   @Override
   public List<PersonDto> getAllByApartmentId(Long id, Integer pageNo, Integer pageSize, String sortBy) {
     Pageable paging = PageRequest.of(pageNo-1, pageSize, Sort.by(sortBy));
-    List<Person> personList = personRepo.findAll(paging).getContent();
+    Person represent = personRepo.findRepresentByApartmentId(id);
+    List<Person> personList = personRepo.findAllByIdParent(represent.getId());
+    personList.add(represent);
     List<PersonDto> personDtos = new ArrayList<>();
     for(Person person : personList){
       String apartmentName = apartmentRepo.getApartmentNameByIdPerson(person.getId());

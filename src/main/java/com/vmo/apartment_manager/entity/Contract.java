@@ -26,15 +26,9 @@ public class Contract extends BaseEntity{
 
   @ManyToOne
   @JoinColumn(name = "apartment_id")
-  @EqualsAndHashCode.Exclude
-  @ToString.Exclude
   private Apartment apartment;
 
   @ManyToOne
   @JoinColumn(name = "person_id")
-  @EqualsAndHashCode.Exclude
-  @ToString.Exclude
   private Person person;
-
-
 }

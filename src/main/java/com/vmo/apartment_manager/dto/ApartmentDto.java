@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class ApartmentDto {
   private Long id;
-  private String ownerApartmentName;
+  private String roomMaster;
   private Double area;
   private int status;
   private int personInApartment;

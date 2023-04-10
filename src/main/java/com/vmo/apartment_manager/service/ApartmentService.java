@@ -9,5 +9,7 @@ public interface ApartmentService {
   Apartment update(Long id, Apartment apartment);
   List<ApartmentDto> getAll(Integer pageNo, Integer pageSize, String sortBy);
   Apartment findById(Long id);
+  List<Apartment> getApartmentsAvailable();
+  List<Apartment> getApartmentsUnAvailable();
 
 }

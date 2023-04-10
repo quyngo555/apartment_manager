@@ -2,6 +2,7 @@ package com.vmo.apartment_manager.service.impl;
 
 import com.vmo.apartment_manager.constant.ConstantError;
 import com.vmo.apartment_manager.dto.ServiceDto;
+import com.vmo.apartment_manager.entity.Bill;
 import com.vmo.apartment_manager.entity.ServiceDetail;
 import com.vmo.apartment_manager.exception.NotFoundException;
 import com.vmo.apartment_manager.repository.BillRepository;
@@ -14,7 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import com.vmo.apartment_manager.entity.Bill;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ServiceDetailServiceImpl implements ServiceDetailService {
@@ -29,12 +30,13 @@ public class ServiceDetailServiceImpl implements ServiceDetailService {
   BillService billService;
 
   @Override
-  public ServiceDto add(ServiceDetail service) {
-    service.caculateFee();
+  @Transactional(rollbackFor = {Exception.class, Throwable.class})
+  public ServiceDto add(long billId, ServiceDetail service) {
+    service.setFee(caculateFee(service));
+    Bill bill = billRepo.findById(service.getBill().getId()).get();
+    service.setBill(bill);
     ServiceDetail serviceDetail = serviceDetailRepo.save(service);
-    Bill bill = billRepo.findById(serviceDetail.getBill().getId()).get();
     bill.setTotal(billService.getTotalFee(bill));
-
     billService.update(bill.getId(), bill);
     return new ServiceDto(serviceDetail);
   }
@@ -69,5 +71,8 @@ public class ServiceDetailServiceImpl implements ServiceDetailService {
     return serviceDetailRepo.findAll(paging).getContent().stream()
         .map(ServiceDto::new)
         .toList();
+  }
+  public Double caculateFee(ServiceDetail service){
+    return (service.getNextNum() - service.getPreviousNum()) * service.getPrice();
   }
 }

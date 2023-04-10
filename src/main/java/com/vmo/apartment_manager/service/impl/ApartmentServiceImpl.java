@@ -50,18 +50,12 @@ public class ApartmentServiceImpl implements ApartmentService {
     List<Apartment> apartments = apartmentRepo.findAll(paging).getContent();
     List<ApartmentDto> apartmentDtos = new ArrayList<>();
     for(Apartment apartment:apartments){
-      List<Person> persons = personRepo.findAllByApartmentId(apartment.getId());
-
+      Person person = personRepo.findRepresentByApartmentId(apartment.getId());
+      List<Person> persons = personRepo.findAllByIdParent(person.getId());
+      persons.add(person);
       ApartmentDto dto = new ApartmentDto();
-      for(Person person: persons){
-        if(person.getIdParent()!= null){
-          dto.setOwnerApartmentName(personRepo.findById(person.getIdParent()).get().getFullName());
-          break;
-        }else{
-          dto.setOwnerApartmentName(personRepo.findById(person.getId()).get().getFullName());
-          break;
-        }
-      }
+
+      dto.setRoomMaster(person.getFullName());
       dto.setId(apartment.getId());
       dto.setStatus(apartment.getStatus());
       dto.setArea(apartment.getArea());
@@ -77,5 +71,15 @@ public class ApartmentServiceImpl implements ApartmentService {
     return apartmentRepo.findById(id).orElseThrow(() -> {
       throw new NotFoundException(ConstantError.APARTMENT_NOT_FOUND + id);
     });
+  }
+
+  @Override
+  public List<Apartment> getApartmentsAvailable() {
+    return null;
+  }
+
+  @Override
+  public List<Apartment> getApartmentsUnAvailable() {
+    return null;
   }
 }

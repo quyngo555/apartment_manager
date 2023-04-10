@@ -27,6 +27,7 @@ public class PersonDto {
     this.phone = person.getPhone();
     this.email = person.getEmail();
     this.cin = person.getCin();
+    this.status = person.getStatus();
     this.gender = person.getGender();
     this.carrer = person.getCarrer();
     this.idParent = person.getIdParent();

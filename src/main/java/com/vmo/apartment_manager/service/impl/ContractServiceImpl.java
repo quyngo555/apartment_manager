@@ -2,13 +2,12 @@ package com.vmo.apartment_manager.service.impl;
 
 import com.vmo.apartment_manager.constant.ConstantError;
 import com.vmo.apartment_manager.entity.Contract;
+import com.vmo.apartment_manager.entity.Person;
 import com.vmo.apartment_manager.exception.NotFoundException;
 import com.vmo.apartment_manager.repository.ApartmentRepository;
 import com.vmo.apartment_manager.repository.ContractRepository;
 import com.vmo.apartment_manager.repository.PersonRepository;
 import com.vmo.apartment_manager.service.ContractService;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -30,9 +29,11 @@ public class ContractServiceImpl implements ContractService {
 
   @Override
   public Contract add(Contract contract) {
-    contract.setPerson(personRepo.findById(contract.getPerson().getId()).orElseThrow(() ->{
-      throw new NotFoundException(ConstantError.PERSON_NOT_FOUND + contract.getPerson().getId());
-    }));
+    Person person = personRepo.findById(contract.getPerson().getId()).get();
+    if (person != null) {
+      person.setIdParent(null);
+    }
+    contract.setPerson(person);
     contract.setApartment(apartmentRepo.findById(contract.getApartment().getId()).orElseThrow(() ->{
       throw new NotFoundException(ConstantError.APARTMENT_NOT_FOUND + contract.getApartment().getId());
     }));

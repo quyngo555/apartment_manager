@@ -2,8 +2,10 @@ package com.vmo.apartment_manager.service.impl;
 
 import com.vmo.apartment_manager.constant.ConstantError;
 import com.vmo.apartment_manager.dto.BillDto;
+import com.vmo.apartment_manager.dto.BillRequest;
 import com.vmo.apartment_manager.dto.ServiceDto;
 import com.vmo.apartment_manager.entity.Bill;
+import com.vmo.apartment_manager.entity.Contract;
 import com.vmo.apartment_manager.entity.ServiceDetail;
 import com.vmo.apartment_manager.exception.NotFoundException;
 import com.vmo.apartment_manager.repository.BillRepository;
@@ -31,8 +33,11 @@ public class BillServiceImpl implements BillService {
   ContractRepository contractRepo;
 
   @Override
-  public BillDto add(Bill bill) {
+  public BillDto add(BillRequest dto) {
+    Contract contract = contractRepo.getContractActive(dto.getApartmentId());
+    Bill bill = new Bill();
     bill.setStauts(0);
+    bill.setContract(contractRepo.findById(contract.getId()).get());
     bill = billRepo.save(bill);
     return new BillDto(bill);
   }
@@ -47,7 +52,8 @@ public class BillServiceImpl implements BillService {
     bill1.setDateOfPayment(bill.getDateOfPayment());
     bill1 = billRepo.save(bill1);
 
-    List<ServiceDto> serviceDtos = serviceDetailRepo.findAllByBillId(bill.getId()).stream()
+    List<ServiceDto> serviceDtos = serviceDetailRepo.findAllByBillId(bill.getId())
+        .stream()
         .map(ServiceDto::new)
         .toList();
     BillDto billDto = new BillDto(bill1, serviceDtos);
@@ -59,7 +65,8 @@ public class BillServiceImpl implements BillService {
     Bill bill =  billRepo.findById(id).orElseThrow(() ->{
       throw new NotFoundException(ConstantError.CONTRACT_NOT_FOUND + id);
     });
-    List<ServiceDto> serviceDtos = serviceDetailRepo.findAllByBillId(bill.getId()).stream()
+    List<ServiceDto> serviceDtos = serviceDetailRepo.findAllByBillId(bill.getId())
+        .stream()
         .map(ServiceDto::new)
         .toList();
     BillDto billDto = new BillDto(bill, serviceDtos);
@@ -83,8 +90,8 @@ public class BillServiceImpl implements BillService {
 
   public Double getTotalFee(Bill bill){
     Double total = (double) 0;
-    if(serviceDetailRepo.findAllByBillId(bill.getId()) == null) return total;
-    List<ServiceDetail> serviceDetails = serviceDetailRepo.findAllByBillId(bill.getId());
+    if(bill.getServiceDetails() == null) return total;
+    List<ServiceDetail> serviceDetails = bill.getServiceDetails();
     for(ServiceDetail serviceDetail : serviceDetails){
       total += serviceDetail.getFee();
     }
@@ -105,5 +112,7 @@ public class BillServiceImpl implements BillService {
     }
     return billDtos;
   }
+
+
 
 }

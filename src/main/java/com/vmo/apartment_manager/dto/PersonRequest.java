@@ -1,15 +1,12 @@
-package com.vmo.apartment_manager.entity;
+package com.vmo.apartment_manager.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.UniqueConstraint;
 import java.sql.Date;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
 @Getter
 @Setter
-public class Person extends BaseEntity{
+public class PersonRequest {
   private String fullName;
   private Date dob;
   private String phone;
@@ -19,5 +16,5 @@ public class Person extends BaseEntity{
   private String carrer;
   private Long idParent;
   private Integer status;
-
+  private Long apartmentId;
 }

@@ -1,5 +1,7 @@
 package com.vmo.apartment_manager.controller;
 
+import com.vmo.apartment_manager.dto.BillDto;
+import com.vmo.apartment_manager.dto.BillRequest;
 import com.vmo.apartment_manager.entity.Bill;
 import com.vmo.apartment_manager.service.BillService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +35,7 @@ public class BillController {
   }
 
   @PostMapping("/bills")
-  public ResponseEntity<?> add(@RequestBody Bill bill){
+  public ResponseEntity<?> add(@RequestBody BillRequest bill){
     return ResponseEntity.ok(billService.add(bill));
   }
 

@@ -1,12 +1,13 @@
 package com.vmo.apartment_manager.service;
 
 import com.vmo.apartment_manager.dto.PersonDto;
+import com.vmo.apartment_manager.dto.PersonRequest;
 import com.vmo.apartment_manager.entity.Person;
 import java.util.Iterator;
 import java.util.List;
 
 public interface PersonService {
-  PersonDto add(Person person);
+  PersonDto add(PersonRequest person);
   PersonDto update(Long id, Person person);
   List<PersonDto> getAll(Integer pageNo, Integer pageSize, String sortBy);
   PersonDto findById(Long id);

@@ -1,5 +1,6 @@
 package com.vmo.apartment_manager.controller;
 
+import com.vmo.apartment_manager.dto.PersonRequest;
 import com.vmo.apartment_manager.entity.Person;
 import com.vmo.apartment_manager.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class PersonController {
     return ResponseEntity.ok(personService.findById(id));
   }
   @PostMapping("/persons")
-  public ResponseEntity<?> add(@RequestBody Person person){
+  public ResponseEntity<?> add(@RequestBody PersonRequest person){
     return ResponseEntity.ok(personService.add(person));
   }
   @PutMapping("/persons/{id}")
@@ -47,7 +48,7 @@ public class PersonController {
     return ResponseEntity.ok(personService.deletePersonsById(ids));
   }
   @GetMapping("/apartments/{id}/persons")
-  public ResponseEntity<?> getAllByApartmentId(@PathVariable("id") long id,@RequestParam(defaultValue = "0") Integer pageNo,
+  public ResponseEntity<?> getAllByApartmentId(@PathVariable("id") long id,@RequestParam(defaultValue = "1") Integer pageNo,
       @RequestParam(defaultValue = "10") Integer pageSize,
       @RequestParam(defaultValue = "id") String sortBy){
     return ResponseEntity.ok(personService.getAllByApartmentId(id, pageNo, pageSize, sortBy));
@@ -57,13 +58,13 @@ public class PersonController {
   public ResponseEntity<?> getPersonsActiveByApartmentId(@PathVariable("id") long id, @RequestParam(defaultValue = "0") Integer pageNo,
       @RequestParam(defaultValue = "10") Integer pageSize,
       @RequestParam(defaultValue = "id") String sortBy){
-    return ResponseEntity.ok(personService.getAllByApartmentId(id, pageNo, pageSize, sortBy));
+    return ResponseEntity.ok(personService.getPersonsActiveByApartmentId(id, pageNo, pageSize, sortBy));
   }
 
   @GetMapping("/apartments/{id}/persons-un-active")
   public ResponseEntity<?> getPersonsUnActiveByApartmentId(@PathVariable("id") long id, @RequestParam(defaultValue = "0") Integer pageNo,
       @RequestParam(defaultValue = "10") Integer pageSize,
       @RequestParam(defaultValue = "id") String sortBy){
-    return ResponseEntity.ok(personService.getAllByApartmentId(id, pageNo, pageSize, sortBy));
+    return ResponseEntity.ok(personService.getPersonsUnActiveByApartmentId(id, pageNo, pageSize, sortBy));
   }
 }

@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/services-detail")
+@RequestMapping("/api")
 public class ServiceDetailController {
 
   @Autowired
   ServiceDetailService serviceDetailService;
 
-  @GetMapping("")
+  @GetMapping("/services-details")
   public ResponseEntity<?> getAll(@RequestParam(defaultValue = "0") Integer pageNo,
       @RequestParam(defaultValue = "10") Integer pageSize,
       @RequestParam(defaultValue = "id") String sortBy){
@@ -32,9 +32,9 @@ public class ServiceDetailController {
     return ResponseEntity.ok(serviceDetailService.findById(id));
   }
 
-  @PostMapping("")
-  public ResponseEntity<?> add(@RequestBody ServiceDetail serviceDetail){
-    return ResponseEntity.ok(serviceDetailService.add(serviceDetail));
+  @PostMapping("/bills/{id}/services-details")
+  public ResponseEntity<?> add(@PathVariable("id") long id, @RequestBody ServiceDetail serviceDetail){
+    return ResponseEntity.ok(serviceDetailService.add(id, serviceDetail));
   }
 
   @PutMapping("/{id}")

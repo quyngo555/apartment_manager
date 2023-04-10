@@ -5,17 +5,20 @@ import com.vmo.apartment_manager.entity.Contract;
 import com.vmo.apartment_manager.entity.ServiceDetail;
 import java.sql.Date;
 import java.util.List;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Data
 public class BillDto {
   private Long id;
   private Double total;
   private int stauts;
   private Date dateOfPayment;
   private Double feeRentApartment;
+  private Long apartmentId;
   private List<ServiceDto> serviceDetailList;
 
   public BillDto(Bill bill) {
@@ -34,4 +37,6 @@ public class BillDto {
     this.feeRentApartment = bill.getContract().getPriceApartment();
     this.serviceDetailList = serviceDetailList;
   }
+
+
 }

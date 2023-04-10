@@ -28,9 +28,8 @@ public class Bill extends BaseEntity {
 
   @ManyToOne
   @JoinColumn(name = "contract_id")
-  @EqualsAndHashCode.Exclude
-  @ToString.Exclude
   private Contract contract;
 
-
+  @OneToMany(mappedBy = "bill")
+  List<ServiceDetail> serviceDetails;
 }

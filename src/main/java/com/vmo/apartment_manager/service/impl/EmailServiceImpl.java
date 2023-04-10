@@ -2,7 +2,9 @@ package com.vmo.apartment_manager.service.impl;
 
 import com.vmo.apartment_manager.entity.Bill;
 import com.vmo.apartment_manager.entity.ServiceDetail;
+import com.vmo.apartment_manager.repository.BillRepository;
 import com.vmo.apartment_manager.repository.PersonRepository;
+import com.vmo.apartment_manager.service.BillService;
 import com.vmo.apartment_manager.service.EmailService;
 import java.util.Date;
 import java.util.List;
@@ -18,12 +20,16 @@ public class EmailServiceImpl implements EmailService {
   PersonRepository personRepo;
 
   @Autowired
+  BillRepository billRepository;
+
+  @Autowired
   private JavaMailSender javaMailSender;
 
   @Override
-  public String sendMail(Bill bill) {
+  public String sendMail(Bill bill1) {
     try{
-      String recipient = personRepo.getPresentedByBillId(bill.getId());
+      Bill bill = billRepository.findById(1l).get();
+      String recipient = personRepo.getEmailPresentedByBillId(bill.getId());
       String content = getContent(bill);
       String subject = "Hóa đơn phí dịch vụ phòng " + bill.getContract().getApartment().getName();
 
@@ -58,7 +64,7 @@ public class EmailServiceImpl implements EmailService {
         .append("\t Payment: ")
         .append(serviceDetail.getFee());
   }
-  content.append("Tổng số tiền phải thanh toán: " + bill.getTotal());
+  content.append("\nTổng số tiền phải thanh toán: " + bill.getTotal());
     return content.toString();
   }
 

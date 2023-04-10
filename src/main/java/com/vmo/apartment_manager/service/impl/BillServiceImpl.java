@@ -12,12 +12,14 @@ import com.vmo.apartment_manager.repository.BillRepository;
 import com.vmo.apartment_manager.repository.ContractRepository;
 import com.vmo.apartment_manager.repository.ServiceDetailRepository;
 import com.vmo.apartment_manager.service.BillService;
+import com.vmo.apartment_manager.service.EmailService;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,6 +33,9 @@ public class BillServiceImpl implements BillService {
 
   @Autowired
   ContractRepository contractRepo;
+
+  @Autowired
+  EmailService emailService;
 
   @Override
   public BillDto add(BillRequest dto) {
@@ -111,6 +116,13 @@ public class BillServiceImpl implements BillService {
       billDtos.add(dto);
     }
     return billDtos;
+  }
+  @Scheduled(cron = "0 15 10 ? * 6L")// Run at 10:15 on the last Friday of the month
+  private void sendBill(){
+    List<Bill> bills = billRepo.findAll();
+    for(Bill bill:bills){
+      emailService.sendMail(bill);
+    }
   }
 
 

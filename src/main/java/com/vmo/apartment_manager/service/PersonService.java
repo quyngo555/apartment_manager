@@ -16,4 +16,5 @@ public interface PersonService {
   List<PersonDto> getPersonsUnActiveByApartmentId(long id, Integer pageNo, Integer pageSize, String sortBy);
   String deletePersonById(Long id);
   String deletePersonsById(long[] ids);
+  List<PersonDto> getPersonByName(String namePerson);
 }

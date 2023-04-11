@@ -100,4 +100,24 @@ public class ApartmentServiceImpl implements ApartmentService {
     }
     return apartments1;
   }
+
+  @Override
+  public ApartmentDto findApartmentByName(Apartment apartment) {
+    Apartment apartment1= apartmentRepo.findApartmentByName(apartment.getName());
+//    if()
+    Person person = personRepo.findRepresentByApartmentId(apartment1.getId());
+    List<Person> persons = new ArrayList<>();
+    ApartmentDto dto = new ApartmentDto();
+    if(person != null){
+      persons = personRepo.findAllByIdParent(person.getId());
+      persons.add(person);
+      dto.setRoomMaster(person.getFullName());
+    }
+    dto.setId(apartment1.getId());
+    dto.setStatus(apartment1.getStatus());
+    dto.setArea(apartment1.getArea());
+    dto.setApartmentName(apartment1.getName());
+    dto.setPersonInApartment(persons.size());
+    return dto;
+  }
 }

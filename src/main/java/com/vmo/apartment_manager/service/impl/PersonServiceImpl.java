@@ -11,7 +11,6 @@ import com.vmo.apartment_manager.repository.ContractRepository;
 import com.vmo.apartment_manager.repository.PersonRepository;
 import com.vmo.apartment_manager.service.PersonService;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -98,7 +97,6 @@ public class PersonServiceImpl implements PersonService {
     });
     String apartmentName = apartmentRepo.getApartmentNameByIdPerson(person.getId());
     return new PersonDto(person, apartmentName);
-
   }
 
   @Override
@@ -162,5 +160,16 @@ public class PersonServiceImpl implements PersonService {
       personRepo.save(person);
     }
     return "Delete succedd!";
+  }
+
+  @Override
+  public List<PersonDto> getPersonByName(String namePerson) {
+    List<Person> personList = personRepo.getPersonByName(namePerson);
+    List<PersonDto> personDtos = new ArrayList<>();
+    for(Person person : personList){
+      String apartmentName = apartmentRepo.getApartmentNameByIdPerson(person.getId());
+      personDtos.add(new PersonDto(person, apartmentName));
+    }
+    return personDtos;
   }
 }

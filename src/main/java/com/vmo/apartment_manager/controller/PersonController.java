@@ -67,4 +67,9 @@ public class PersonController {
       @RequestParam(defaultValue = "id") String sortBy){
     return ResponseEntity.ok(personService.getPersonsUnActiveByApartmentId(id, pageNo, pageSize, sortBy));
   }
+
+  @PostMapping("/persons/search-by-name")
+  public ResponseEntity<?> getPersonByName(@RequestBody Person p){
+    return ResponseEntity.ok(personService.getPersonByName(p.getFullName()));
+  }
 }

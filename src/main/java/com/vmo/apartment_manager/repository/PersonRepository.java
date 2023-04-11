@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PersonRepository extends JpaRepository<Person, Long> {
   @Query(value = "select p from Person p "
-      + "left join Contract c on c.person.id = p.id "
+      + "inner join Contract c on c.person.id = p.id "
       + "inner join Apartment a on a.id = c.apartment.id "
       + "where a.id = ?1")
   Person findRepresentByApartmentId(Long idApartment);
@@ -26,4 +26,7 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
       + "inner join Contract c on c.person.id = p.id "
       + "inner join Apartment a on a.id = c.apartment.id where a.id = ?1")
   long getrepresentIdByApartmentId(long apartmentId);
+  @Query(value = "select p from Person p "
+      + "where p.fullName like %?1%")
+  List<Person> getPersonByName(String namePerson);
 }

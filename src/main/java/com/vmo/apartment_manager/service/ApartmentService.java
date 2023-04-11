@@ -11,5 +11,6 @@ public interface ApartmentService {
   Apartment findById(Long id);
   List<Apartment> getApartmentsAvailable();
   List<Apartment> getApartmentsUnAvailable();
+  ApartmentDto findApartmentByName(Apartment apartment);
 
 }

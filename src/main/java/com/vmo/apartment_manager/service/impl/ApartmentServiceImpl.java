@@ -5,6 +5,7 @@ import com.vmo.apartment_manager.dto.ApartmentDto;
 import com.vmo.apartment_manager.entity.Apartment;
 import com.vmo.apartment_manager.exception.NotFoundException;
 import com.vmo.apartment_manager.repository.ApartmentRepository;
+import com.vmo.apartment_manager.repository.ContractRepository;
 import com.vmo.apartment_manager.repository.PersonRepository;
 import com.vmo.apartment_manager.service.ApartmentService;
 import java.util.ArrayList;
@@ -24,6 +25,9 @@ public class ApartmentServiceImpl implements ApartmentService {
 
   @Autowired
   PersonRepository personRepo;
+
+  @Autowired
+  ContractRepository contractRepo;
 
   @Override
   public Apartment add(Apartment apartment) {
@@ -51,11 +55,13 @@ public class ApartmentServiceImpl implements ApartmentService {
     List<ApartmentDto> apartmentDtos = new ArrayList<>();
     for(Apartment apartment:apartments){
       Person person = personRepo.findRepresentByApartmentId(apartment.getId());
-      List<Person> persons = personRepo.findAllByIdParent(person.getId());
-      persons.add(person);
+      List<Person> persons = new ArrayList<>();
       ApartmentDto dto = new ApartmentDto();
-
-      dto.setRoomMaster(person.getFullName());
+      if(person != null){
+        persons = personRepo.findAllByIdParent(person.getId());
+        persons.add(person);
+        dto.setRoomMaster(person.getFullName());
+      }
       dto.setId(apartment.getId());
       dto.setStatus(apartment.getStatus());
       dto.setArea(apartment.getArea());
@@ -75,11 +81,23 @@ public class ApartmentServiceImpl implements ApartmentService {
 
   @Override
   public List<Apartment> getApartmentsAvailable() {
-    return null;
+    List<Apartment> apartments = apartmentRepo.findAll();
+    List<Apartment> apartments1 = new ArrayList<>();
+    for(Apartment apartment:apartments){
+      if(contractRepo.getContractByApartmentId(apartment.getId()) == null)
+        apartments1.add(apartment);
+    }
+    return apartments1;
   }
 
   @Override
   public List<Apartment> getApartmentsUnAvailable() {
-    return null;
+    List<Apartment> apartments = apartmentRepo.findAll();
+    List<Apartment> apartments1 = new ArrayList<>();
+    for(Apartment apartment:apartments){
+      if(contractRepo.getContractByApartmentId(apartment.getId()) != null)
+        apartments1.add(apartment);
+    }
+    return apartments1;
   }
 }

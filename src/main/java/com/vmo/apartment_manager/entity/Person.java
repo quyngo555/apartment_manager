@@ -29,8 +29,9 @@ public class Person extends BaseEntity{
 
   private String carrer;
 
-  private Long idParent;
+  private Long parentId;
 
   private Integer status;
 
+  private Long apartmentId;
 }

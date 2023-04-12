@@ -1,8 +1,8 @@
 package com.vmo.apartment_manager.controller;
 
-import com.vmo.apartment_manager.dto.PersonRequest;
 import com.vmo.apartment_manager.entity.Person;
 import com.vmo.apartment_manager.service.PersonService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("api")
+@SecurityRequirement(name = "Authorization")
 public class PersonController {
 
   @Autowired
@@ -32,7 +33,7 @@ public class PersonController {
     return ResponseEntity.ok(personService.findById(id));
   }
   @PostMapping("/persons")
-  public ResponseEntity<?> add(@RequestBody PersonRequest person){
+  public ResponseEntity<?> add(@RequestBody Person person){
     return ResponseEntity.ok(personService.add(person));
   }
   @PutMapping("/persons/{id}")
@@ -55,10 +56,8 @@ public class PersonController {
   }
 
   @GetMapping("/apartments/{id}/persons-active")
-  public ResponseEntity<?> getPersonsActiveByApartmentId(@PathVariable("id") long id, @RequestParam(defaultValue = "0") Integer pageNo,
-      @RequestParam(defaultValue = "10") Integer pageSize,
-      @RequestParam(defaultValue = "id") String sortBy){
-    return ResponseEntity.ok(personService.getPersonsActiveByApartmentId(id, pageNo, pageSize, sortBy));
+  public ResponseEntity<?> getPersonsActiveByApartmentId(@PathVariable("id") long id){
+    return ResponseEntity.ok(personService.getPersonsActiveByApartmentId(id));
   }
 
   @GetMapping("/apartments/{id}/persons-un-active")

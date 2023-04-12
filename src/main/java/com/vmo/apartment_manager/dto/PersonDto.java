@@ -30,7 +30,7 @@ public class PersonDto {
     this.status = person.getStatus();
     this.gender = person.getGender();
     this.carrer = person.getCarrer();
-    this.idParent = person.getIdParent();
+    this.idParent = person.getParentId();
     this.apartmentName = apartmentName;
     this.status = person.getStatus();
   }

@@ -1,5 +1,7 @@
 package com.vmo.apartment_manager.service.impl;
 
+import static com.vmo.apartment_manager.entity.TypeService.ELECTRICITY;
+
 import com.vmo.apartment_manager.constant.ConstantError;
 import com.vmo.apartment_manager.dto.ServiceDto;
 import com.vmo.apartment_manager.entity.Bill;
@@ -32,6 +34,9 @@ public class ServiceDetailServiceImpl implements ServiceDetailService {
   @Override
   @Transactional(rollbackFor = {Exception.class, Throwable.class})
   public ServiceDto add(long billId, ServiceDetail service) {
+    if(service.getName().equals(ELECTRICITY)){
+
+    }
     service.setFee(caculateFee(service));
     Bill bill = billRepo.findById(service.getBill().getId()).get();
     service.setBill(bill);
@@ -75,4 +80,40 @@ public class ServiceDetailServiceImpl implements ServiceDetailService {
   public Double caculateFee(ServiceDetail service){
     return (service.getNextNum() - service.getPreviousNum()) * service.getPrice();
   }
+
+//  private void writeTableHeader(PdfPTable table) {
+//    PdfPCell cell = new PdfPCell();
+//    cell.setBackgroundColor(Color.BLUE);
+//    cell.setPadding(5);
+//
+//    Font font = FontFactory.getFont(FontFactory.HELVETICA);
+//    font.setColor(Color.WHITE);
+//
+//    cell.setPhrase(new Phrase("STT", font));
+//
+//    table.addCell(cell);
+//
+//    cell.setPhrase(new Phrase("TYPE SERVICE", font));
+//    table.addCell(cell);
+//
+//    cell.setPhrase(new Phrase("PREVIOUS NUM", font));
+//    table.addCell(cell);
+//
+//    cell.setPhrase(new Phrase("NEXT NUM", font));
+//    table.addCell(cell);
+//
+//    cell.setPhrase(new Phrase("PAYMENT", font));
+//    table.addCell(cell);
+//  }
+//  private void writeTableData(PdfPTable table) {
+//    Bill bill = billRepo.findById(id);
+//    List<ServiceDetail> serviceDetails =
+//    for (User user : listUsers) {
+//      table.addCell(String.valueOf(user.getId()));
+//      table.addCell(user.getEmail());
+//      table.addCell(user.getFullName());
+//      table.addCell(user.getRoles().toString());
+//      table.addCell(String.valueOf(user.isEnabled()));
+//    }
+//  }
 }

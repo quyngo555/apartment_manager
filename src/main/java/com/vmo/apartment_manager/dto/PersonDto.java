@@ -17,10 +17,10 @@ public class PersonDto {
   private Boolean gender;
   private String carrer;
   private Long idParent;
-  private String apartmentName;
+  private String apartmentCode;
   private Integer status;
 
-  public PersonDto(Person person, String apartmentName) {
+  public PersonDto(Person person, String apartmentCode) {
     this.id = person.getId();
     this.fullName = person.getFullName();
     this.dob = person.getDob();
@@ -31,7 +31,7 @@ public class PersonDto {
     this.gender = person.getGender();
     this.carrer = person.getCarrer();
     this.idParent = person.getParentId();
-    this.apartmentName = apartmentName;
+    this.apartmentCode = apartmentCode;
     this.status = person.getStatus();
   }
 }

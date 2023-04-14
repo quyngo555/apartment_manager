@@ -31,22 +31,20 @@ public class ApartmentServiceImpl implements ApartmentService {
 
   @Override
   public List<ApartmentDto> getAll(Integer pageNo, Integer pageSize, String sortBy) {
-    Pageable paging = PageRequest.of(pageNo-1, pageSize, Sort.by(sortBy));
+    Pageable paging = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy));
     List<Apartment> apartments = apartmentRepo.findAll(paging).getContent();
     List<ApartmentDto> apartmentDtos = new ArrayList<>();
-    for(Apartment apartment:apartments){
-      Person person = personRepo.findRepresentByApartmentId(apartment.getId());
-      List<Person> persons = new ArrayList<>();
+    for (Apartment apartment : apartments) {
+      List<Person> persons = personRepo.findPersonByApartmentId(apartment.getId());
       ApartmentDto dto = new ApartmentDto();
-      if(person != null){
-        persons = personRepo.findAllByParentId(person.getId());
-        persons.add(person);
+      Person person = personRepo.findRepresentByApartmentId(apartment.getId());
+      if (person != null) {
         dto.setRoomMaster(person.getFullName());
       }
-      dto.setId(apartment.getId());
       dto.setStatus(apartment.getStatus());
+      dto.setId(apartment.getId());
       dto.setArea(apartment.getArea());
-      dto.setApartmentName(apartment.getName());
+      dto.setApartmentCode(apartment.getCode());
       dto.setPersonInApartment(persons.size());
       apartmentDtos.add(dto);
     }
@@ -64,9 +62,10 @@ public class ApartmentServiceImpl implements ApartmentService {
   public List<Apartment> getApartmentsAvailable() {
     List<Apartment> apartments = apartmentRepo.findAll();
     List<Apartment> apartments1 = new ArrayList<>();
-    for(Apartment apartment:apartments){
-      if(contractRepo.getContractByApartmentId(apartment.getId()) == null)
+    for (Apartment apartment : apartments) {
+      if (contractRepo.findContractByApartmentId(apartment.getId()) == null) {
         apartments1.add(apartment);
+      }
     }
     return apartments1;
   }
@@ -75,44 +74,48 @@ public class ApartmentServiceImpl implements ApartmentService {
   public List<Apartment> getApartmentsUnAvailable() {
     List<Apartment> apartments = apartmentRepo.findAll();
     List<Apartment> apartments1 = new ArrayList<>();
-    for(Apartment apartment:apartments){
-      if(contractRepo.getContractByApartmentId(apartment.getId()) != null)
+    for (Apartment apartment : apartments) {
+      if (contractRepo.findContractByApartmentId(apartment.getId()) != null) {
         apartments1.add(apartment);
+      }
     }
     return apartments1;
   }
 
   @Override
-  public ApartmentDto findApartmentByName(Apartment apartment) {
-    Apartment apartment1= apartmentRepo.findApartmentByName(apartment.getName());
-    Person person = personRepo.findRepresentByApartmentId(apartment1.getId());
-    List<Person> persons = new ArrayList<>();
-    ApartmentDto dto = new ApartmentDto();
-    if(person != null){
-      persons = personRepo.findAllByParentId(person.getId());
-      persons.add(person);
-      dto.setRoomMaster(person.getFullName());
+  public List<ApartmentDto> findApartmentByName(Apartment apartment) {
+    List<Apartment> apartments = apartmentRepo.getApartmentByName(apartment.getName());
+    List<ApartmentDto> apartmentDtos = new ArrayList<>();
+    for (Apartment apartment1 : apartments) {
+      Person person = personRepo.findRepresentByApartmentId(apartment1.getId());
+      List<Person> persons = personRepo.findPersonByApartmentId(apartment1.getId());
+      ApartmentDto dto = new ApartmentDto();
+      if (person != null) {
+        dto.setRoomMaster(person.getFullName());
+      }
+      dto.setId(apartment1.getId());
+      dto.setStatus(apartment1.getStatus());
+      dto.setArea(apartment1.getArea());
+      dto.setApartmentCode(apartment1.getCode());
+      dto.setPersonInApartment(persons.size());
+      apartmentDtos.add(dto);
     }
-    dto.setId(apartment1.getId());
-    dto.setStatus(apartment1.getStatus());
-    dto.setArea(apartment1.getArea());
-    dto.setApartmentName(apartment1.getName());
-    dto.setPersonInApartment(persons.size());
-    return dto;
+    return apartmentDtos;
   }
-  public List<ApartmentDto> findApartmentByRepresent(String representName){
+
+  public List<ApartmentDto> findApartmentByRepresent(String representName) {
     List<Person> personList = personRepo.getRepresentByName(representName);
 
-    List<Apartment> apartments= new ArrayList<>();
-    for(Person p: personList){
+    List<Apartment> apartments = new ArrayList<>();
+    for (Person p : personList) {
       apartments.addAll(apartmentRepo.findAllByRepresentId(p.getId()));
     }
     List<ApartmentDto> apartmentDtos = new ArrayList<>();
-    for(Apartment apartment:apartments){
+    for (Apartment apartment : apartments) {
       Person person1 = personRepo.findRepresentByApartmentId(apartment.getId());
       List<Person> persons = new ArrayList<>();
       ApartmentDto dto = new ApartmentDto();
-      if(person1 != null){
+      if (person1 != null) {
         persons = personRepo.findAllByParentId(person1.getId());
         persons.add(person1);
         dto.setRoomMaster(person1.getFullName());
@@ -120,7 +123,7 @@ public class ApartmentServiceImpl implements ApartmentService {
       dto.setId(apartment.getId());
       dto.setStatus(apartment.getStatus());
       dto.setArea(apartment.getArea());
-      dto.setApartmentName(apartment.getName());
+      dto.setApartmentCode(apartment.getCode());
       dto.setPersonInApartment(persons.size());
       apartmentDtos.add(dto);
     }

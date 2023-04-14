@@ -1,6 +1,7 @@
 package com.vmo.apartment_manager.service.impl;
 
 import com.vmo.apartment_manager.constant.ConstantError;
+import com.vmo.apartment_manager.entity.Apartment;
 import com.vmo.apartment_manager.entity.Contract;
 import com.vmo.apartment_manager.entity.Person;
 import com.vmo.apartment_manager.exception.NotFoundException;
@@ -8,12 +9,14 @@ import com.vmo.apartment_manager.repository.ApartmentRepository;
 import com.vmo.apartment_manager.repository.ContractRepository;
 import com.vmo.apartment_manager.repository.PersonRepository;
 import com.vmo.apartment_manager.service.ContractService;
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ContractServiceImpl implements ContractService {
@@ -28,15 +31,18 @@ public class ContractServiceImpl implements ContractService {
   PersonRepository personRepo;
 
   @Override
-  public Contract add(Contract contract) {
-    Person person = personRepo.findById(contract.getPerson().getId()).get();
-    if (person != null) {
-      person.setIdParent(null);
+  public Contract add(Contract contract) throws Exception {
+    Apartment apartment = apartmentRepo.findById(contract.getApartment().getId()).get();
+    if(contractRepo.checkContractActiveByApartmentId(apartment.getId()) == 0){
+      apartment.setStatus(1);
+      contract.setApartment(apartment);
+    }else{
+      throw new Exception(ConstantError.CONTRACT_EXISTS);
     }
+    Person person = personRepo.findById(contract.getPerson().getId()).get();
+
     contract.setPerson(person);
-    contract.setApartment(apartmentRepo.findById(contract.getApartment().getId()).orElseThrow(() ->{
-      throw new NotFoundException(ConstantError.APARTMENT_NOT_FOUND + contract.getApartment().getId());
-    }));
+    apartmentRepo.save(apartment);
     return contractRepo.save(contract);
   }
 
@@ -83,11 +89,15 @@ public class ContractServiceImpl implements ContractService {
   }
 
   @Override
+  @Transactional(rollbackFor = {Exception.class, Throwable.class})
   public String changeAllStatusByIds(long[] ids) {
     for(long id: ids){
-      Contract contract = contractRepo.findByIdPerson(id);
-      contract.setStatus(0);
-      contractRepo.save(contract);
+      Contract contract = contractRepo.findByRepresent(id);
+      if(contract != null){
+        contract.setStatus(0);
+        contractRepo.save(contract);
+      }
+
     }
     return "Change status succedd!";
   }
@@ -95,5 +105,10 @@ public class ContractServiceImpl implements ContractService {
   @Override
   public List<Contract> findAllByApartmentId(long id) {
     return contractRepo.findAllByApartmentId(id);
+  }
+
+  @Override
+  public List<Contract> findContractByCreatedBetween(Date startDate, Date endDate) {
+    return contractRepo.findByCreatedDateBetween(startDate, endDate);
   }
 }

@@ -11,6 +11,6 @@ public class ApartmentDto {
   private Double area;
   private int status;
   private int personInApartment;
-  private String apartmentName;
+  private String apartmentCode;
 
 }

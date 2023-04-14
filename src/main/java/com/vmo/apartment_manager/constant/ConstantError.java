@@ -8,4 +8,5 @@ public class ConstantError {
   public static final String BILL_NOT_FOUND = "does not exist bill with id: ";
   public static final String EXIT_REPRESENT = "represent is already in apartment ";
   public static final String CONTRACT_NOT_FOUND = "does not exist contract with id: ";
+  public static final String CONTRACT_EXISTS = "Apartment is already in use, cannot add new contract";
 }

@@ -3,6 +3,7 @@ package com.vmo.apartment_manager.controller;
 import com.vmo.apartment_manager.entity.Person;
 import com.vmo.apartment_manager.service.PersonService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import java.sql.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -70,5 +71,15 @@ public class PersonController {
   @PostMapping("/persons/search-by-name")
   public ResponseEntity<?> getPersonByName(@RequestBody Person p){
     return ResponseEntity.ok(personService.getPersonByName(p.getFullName()));
+  }
+
+  @GetMapping("/persons/represent")
+  public ResponseEntity<?> getRepresent(){
+    return ResponseEntity.ok(personService.getRepresent());
+  }
+  @GetMapping("/persons/search-by-date")
+  public ResponseEntity<?> getPersonCreatedBetween(@RequestParam Date startDate,
+      @RequestParam Date endDate) {
+    return ResponseEntity.ok(personService.findPersonByCreatedBetween(startDate, endDate));
   }
 }

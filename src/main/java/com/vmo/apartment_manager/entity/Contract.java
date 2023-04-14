@@ -22,6 +22,8 @@ public class Contract extends BaseEntity{
 
   private Long idUser;
 
+  private String code;
+
   private Integer status;
 
   @ManyToOne

@@ -8,7 +8,7 @@ import lombok.Setter;
 public class ApartmentDto {
   private Long id;
   private String roomMaster;
-  private Double area;
+  private String contractCode;
   private int status;
   private int personInApartment;
   private String apartmentCode;

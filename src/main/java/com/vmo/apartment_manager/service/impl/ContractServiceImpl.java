@@ -40,7 +40,7 @@ public class ContractServiceImpl implements ContractService {
       throw new Exception(ConstantError.CONTRACT_EXISTS);
     }
     Person person = personRepo.findById(contract.getPerson().getId()).get();
-
+    contract.setCode(contract.getCode());
     contract.setPerson(person);
     apartmentRepo.save(apartment);
     return contractRepo.save(contract);
@@ -57,6 +57,7 @@ public class ContractServiceImpl implements ContractService {
     contract1.setApartment(apartmentRepo.findById(contract.getApartment().getId()).orElseThrow(() ->{
       throw new NotFoundException(ConstantError.APARTMENT_NOT_FOUND + contract.getApartment().getId());
     }));
+    contract1.setCode(contract.getCode());
     contract1.setEndDate(contract.getEndDate());
     contract1.setStartDate(contract.getStartDate());
     contract1.setStatus(contract.getStatus());
@@ -102,10 +103,7 @@ public class ContractServiceImpl implements ContractService {
     return "Change status succedd!";
   }
 
-  @Override
-  public List<Contract> findAllByApartmentId(long id) {
-    return contractRepo.findAllByApartmentId(id);
-  }
+
 
   @Override
   public List<Contract> findContractByCreatedBetween(Date startDate, Date endDate) {

@@ -3,6 +3,7 @@ package com.vmo.apartment_manager.service.impl;
 import com.vmo.apartment_manager.constant.ConstantError;
 import com.vmo.apartment_manager.dto.ApartmentDto;
 import com.vmo.apartment_manager.entity.Apartment;
+import com.vmo.apartment_manager.entity.Contract;
 import com.vmo.apartment_manager.entity.Person;
 import com.vmo.apartment_manager.exception.NotFoundException;
 import com.vmo.apartment_manager.repository.ApartmentRepository;
@@ -36,14 +37,18 @@ public class ApartmentServiceImpl implements ApartmentService {
     List<ApartmentDto> apartmentDtos = new ArrayList<>();
     for (Apartment apartment : apartments) {
       List<Person> persons = personRepo.findPersonByApartmentId(apartment.getId());
-      ApartmentDto dto = new ApartmentDto();
       Person person = personRepo.findRepresentByApartmentId(apartment.getId());
+      Contract contract = contractRepo.findContractByApartmentId(apartment.getId());
+      ApartmentDto dto = new ApartmentDto();
       if (person != null) {
         dto.setRoomMaster(person.getFullName());
       }
+      if(contract != null){
+        dto.setContractCode(contract.getCode());
+      }
       dto.setStatus(apartment.getStatus());
       dto.setId(apartment.getId());
-      dto.setArea(apartment.getArea());
+
       dto.setApartmentCode(apartment.getCode());
       dto.setPersonInApartment(persons.size());
       apartmentDtos.add(dto);
@@ -87,6 +92,7 @@ public class ApartmentServiceImpl implements ApartmentService {
     List<Apartment> apartments = apartmentRepo.getApartmentByName(apartment.getName());
     List<ApartmentDto> apartmentDtos = new ArrayList<>();
     for (Apartment apartment1 : apartments) {
+      Contract contract = contractRepo.findContractByApartmentId(apartment.getId());
       Person person = personRepo.findRepresentByApartmentId(apartment1.getId());
       List<Person> persons = personRepo.findPersonByApartmentId(apartment1.getId());
       ApartmentDto dto = new ApartmentDto();
@@ -95,7 +101,7 @@ public class ApartmentServiceImpl implements ApartmentService {
       }
       dto.setId(apartment1.getId());
       dto.setStatus(apartment1.getStatus());
-      dto.setArea(apartment1.getArea());
+      dto.setContractCode(apartment1.getCode());
       dto.setApartmentCode(apartment1.getCode());
       dto.setPersonInApartment(persons.size());
       apartmentDtos.add(dto);
@@ -113,8 +119,12 @@ public class ApartmentServiceImpl implements ApartmentService {
     List<ApartmentDto> apartmentDtos = new ArrayList<>();
     for (Apartment apartment : apartments) {
       Person person1 = personRepo.findRepresentByApartmentId(apartment.getId());
+      Contract contract = contractRepo.findContractByApartmentId(apartment.getId());
       List<Person> persons = new ArrayList<>();
       ApartmentDto dto = new ApartmentDto();
+      if(contract != null){
+        dto.setContractCode(contract.getCode());
+      }
       if (person1 != null) {
         persons = personRepo.findAllByParentId(person1.getId());
         persons.add(person1);
@@ -122,7 +132,7 @@ public class ApartmentServiceImpl implements ApartmentService {
       }
       dto.setId(apartment.getId());
       dto.setStatus(apartment.getStatus());
-      dto.setArea(apartment.getArea());
+
       dto.setApartmentCode(apartment.getCode());
       dto.setPersonInApartment(persons.size());
       apartmentDtos.add(dto);

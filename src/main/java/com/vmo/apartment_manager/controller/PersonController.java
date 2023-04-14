@@ -24,7 +24,7 @@ public class PersonController {
   private PersonService personService;
 
   @GetMapping("/persons")
-  public ResponseEntity<?> getAll(@RequestParam(defaultValue = "0") Integer pageNo,
+  public ResponseEntity<?> getAll(@RequestParam(defaultValue = "1") Integer pageNo,
       @RequestParam(defaultValue = "10") Integer pageSize,
       @RequestParam(defaultValue = "id") String sortBy){
     return ResponseEntity.ok(personService.getAll(pageNo, pageSize, sortBy));

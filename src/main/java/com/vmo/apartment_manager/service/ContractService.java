@@ -11,6 +11,5 @@ public interface ContractService {
   List<Contract> getAll(Integer pageNo, Integer pageSize, String sortBy);
   String changeStatusById(long id);
   String changeAllStatusByIds(long[] ids);
-  List<Contract> findAllByApartmentId(long id);
   List<Contract> findContractByCreatedBetween(Date startDate, Date endDate);
 }

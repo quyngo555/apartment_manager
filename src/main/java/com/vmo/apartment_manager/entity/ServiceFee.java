@@ -12,15 +12,10 @@ import lombok.ToString;
 @Entity
 @Getter
 @Setter
-public class ServiceDetail extends BaseEntity {
+public class ServiceFee extends BaseEntity {
   private Double price;
   private String unit;
-  private int nextNum;
-  private int previousNum;
-  private String note;
   private  TypeService name;
-  private Double fee;
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "bill_id")
-  private Bill bill;
+
 }
+

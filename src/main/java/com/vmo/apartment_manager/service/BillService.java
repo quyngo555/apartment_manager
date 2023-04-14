@@ -1,16 +1,13 @@
 package com.vmo.apartment_manager.service;
 
 import com.vmo.apartment_manager.dto.BillDto;
-import com.vmo.apartment_manager.dto.BillRequest;
 import com.vmo.apartment_manager.entity.Bill;
 import java.util.List;
 
 public interface BillService {
-  BillDto add(BillRequest bill);
-  BillDto update(Long id, Bill bill);
-  BillDto findById(long id);
-  List<BillDto> getAllBill(Integer pageNo, Integer pageSize, String sortBy);
-  Double getTotalFee(Bill bill);
-  List<BillDto> getBillsByApartmentId(long apartmentId);
+  Bill add(Bill bill);
+  Bill update(long id, Bill bill);
+  Bill findById(long id);
+  List<BillDto> findAll();
 
 }

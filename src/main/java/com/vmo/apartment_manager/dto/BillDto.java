@@ -1,42 +1,25 @@
 package com.vmo.apartment_manager.dto;
 
 import com.vmo.apartment_manager.entity.Bill;
+import com.vmo.apartment_manager.entity.BillDetail;
 import com.vmo.apartment_manager.entity.Contract;
-import com.vmo.apartment_manager.entity.ServiceDetail;
 import java.sql.Date;
 import java.util.List;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
-@Data
 public class BillDto {
-  private Long id;
   private Double total;
   private int stauts;
-  private Date dateOfPayment;
-  private Double feeRentApartment;
-  private Long apartmentId;
-  private List<ServiceDto> serviceDetailList;
+  private Date paidDate;
+  private String note;
+  private List<BillDetail> billDetails;
+  private String  apartmentName;
 
   public BillDto(Bill bill) {
-    this.id = bill.getId();
     this.total = bill.getTotal();
     this.stauts = bill.getStauts();
-    this.dateOfPayment = bill.getDateOfPayment();
-    this.feeRentApartment = bill.getContract().getPriceApartment();
+    this.paidDate = bill.getPaidDate();
+    this.note = bill.getNote();
+//    this.billDetails = bill.getBillDetailList().stream().map(BillDetail :: new).toList();
+    this.apartmentName = bill.getContract().getApartment().getName();
   }
-
-  public BillDto(Bill bill, List<ServiceDto> serviceDetailList) {
-    this.id = bill.getId();
-    this.total = bill.getTotal();
-    this.stauts = bill.getStauts();
-    this.dateOfPayment = bill.getDateOfPayment();
-    this.feeRentApartment = bill.getContract().getPriceApartment();
-    this.serviceDetailList = serviceDetailList;
-  }
-
-
 }

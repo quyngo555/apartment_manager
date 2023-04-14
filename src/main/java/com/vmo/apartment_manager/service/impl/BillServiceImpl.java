@@ -1,24 +1,18 @@
 package com.vmo.apartment_manager.service.impl;
 
-import com.vmo.apartment_manager.constant.ConstantError;
 import com.vmo.apartment_manager.dto.BillDto;
-import com.vmo.apartment_manager.dto.BillRequest;
-import com.vmo.apartment_manager.dto.ServiceDto;
 import com.vmo.apartment_manager.entity.Bill;
 import com.vmo.apartment_manager.entity.Contract;
-import com.vmo.apartment_manager.entity.ServiceDetail;
-import com.vmo.apartment_manager.exception.NotFoundException;
+import com.vmo.apartment_manager.entity.BillDetail;
+import com.vmo.apartment_manager.repository.BillDetailRepository;
 import com.vmo.apartment_manager.repository.BillRepository;
 import com.vmo.apartment_manager.repository.ContractRepository;
-import com.vmo.apartment_manager.repository.ServiceDetailRepository;
+import com.vmo.apartment_manager.repository.ServiceFeeRepository;
 import com.vmo.apartment_manager.service.BillService;
-import com.vmo.apartment_manager.service.EmailService;
-import java.util.ArrayList;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -27,104 +21,61 @@ public class BillServiceImpl implements BillService {
 
   @Autowired
   BillRepository billRepo;
-
   @Autowired
-  ServiceDetailRepository serviceDetailRepo;
-
+  BillDetailRepository billDetailRepo;
   @Autowired
   ContractRepository contractRepo;
-
   @Autowired
-  EmailService emailService;
+  ServiceFeeRepository serviceFeeRepo;
 
   @Override
-  public BillDto add(BillRequest dto) {
-    Contract contract = contractRepo.getContractActive(dto.getApartmentId());
-    Bill bill = new Bill();
+  public Bill add(Bill bill) {
     bill.setStauts(0);
-    bill.setContract(contractRepo.findById(contract.getId()).get());
-    bill = billRepo.save(bill);
-    return new BillDto(bill);
+    return billRepo.save(bill);
   }
 
   @Override
-  public BillDto update(Long id, Bill bill) {
-    Bill bill1 = billRepo.findById(id).orElseThrow(() ->{
-      throw new NotFoundException(ConstantError.BILL_NOT_FOUND + id);
-    });
-    bill1.setTotal( getTotalFee(bill1));
+  public Bill update(long id, Bill bill) {
+    Bill bill1 = billRepo.findById(bill.getId()).get();
+    List<BillDetail> billDetailList =bill1.getBillDetailList();
+    Double total = 0.0;
+    for(BillDetail billDetail: billDetailList){
+      total += billDetail.getSubTotal();
+    }
+    bill1.setPaidDate(bill.getPaidDate());
     bill1.setStauts(bill.getStauts());
-    bill1.setDateOfPayment(bill.getDateOfPayment());
-    bill1 = billRepo.save(bill1);
+    bill1.setTotal(total);
+    return billRepo.save(bill1);
+  }
 
-    List<ServiceDto> serviceDtos = serviceDetailRepo.findAllByBillId(bill.getId())
-        .stream()
-        .map(ServiceDto::new)
+  @Override
+  public Bill findById(long id) {
+    Bill bill = billRepo.findById(id).get();
+    return billRepo.findById(id).get();
+  }
+
+  @Override
+  public List<BillDto> findAll() {
+     return billRepo.findAll().stream()
+        .map(BillDto:: new)
         .toList();
-    BillDto billDto = new BillDto(bill1, serviceDtos);
-    return billDto;
-  }
 
-  @Override
-  public BillDto findById(long id) {
-    Bill bill =  billRepo.findById(id).orElseThrow(() ->{
-      throw new NotFoundException(ConstantError.CONTRACT_NOT_FOUND + id);
-    });
-    List<ServiceDto> serviceDtos = serviceDetailRepo.findAllByBillId(bill.getId())
-        .stream()
-        .map(ServiceDto::new)
-        .toList();
-    BillDto billDto = new BillDto(bill, serviceDtos);
-    return billDto;
   }
-
-  @Override
-  public List<BillDto> getAllBill(Integer pageNo, Integer pageSize, String sortBy) {
-    Pageable paging = PageRequest.of(pageNo-1, pageSize, Sort.by(sortBy));
-    List<Bill> bills =  billRepo.findAll(paging).getContent();
-    List<BillDto> billDtos = new ArrayList<>();
-    for(Bill bill: bills){
-      List<ServiceDto> serviceDtos = serviceDetailRepo.findAllByBillId(bill.getId()).stream()
-          .map(ServiceDto::new)
-          .toList();
-      BillDto dto = new BillDto(bill, serviceDtos);
-      billDtos.add(dto);
-    }
-    return billDtos;
-  }
-
-  public Double getTotalFee(Bill bill){
-    Double total = (double) 0;
-    if(bill.getServiceDetails() == null) return total;
-    List<ServiceDetail> serviceDetails = bill.getServiceDetails();
-    for(ServiceDetail serviceDetail : serviceDetails){
-      total += serviceDetail.getFee();
-    }
-    total += bill.getContract().getPriceApartment();
-    return total;
-  }
-
-  @Override
-  public List<BillDto> getBillsByApartmentId(long apartmentId) {
-    List<Bill> bills = billRepo.getBillsByApartmentId(apartmentId);
-    List<BillDto> billDtos = new ArrayList<>();
-    for(Bill bill: bills){
-      List<ServiceDto> serviceDtos = serviceDetailRepo.findAllByBillId(bill.getId()).stream()
-          .map(ServiceDto::new)
-          .toList();
-      BillDto  dto = new BillDto(bill, serviceDtos);
-      billDtos.add(dto);
-    }
-    return billDtos;
-  }
-  @Scheduled(cron = "0 15 10 ? * 6L")// Run at 10:15 on the last Friday of the month
-  private void sendBill(){
-    List<Bill> bills = billRepo.findAll();
-    for(Bill bill:bills){
-      emailService.sendMail(bill);
+  @Scheduled(cron = "0 15 10 ? * 6L")
+  private void autoGenerateBills(){
+    LocalDate termPayment =  LocalDate.now().plusDays(7);
+    List<Contract> contracts = contractRepo.findContractActive();
+    for(Contract contract: contracts){
+      Bill bill = new Bill();
+      bill.setContract(contract);
+      bill.setTermPayment(Date.valueOf(termPayment));
+      bill = billRepo.save(bill);
+      for(long i = 1; i <= 2; i++){
+        BillDetail billDetail = new BillDetail();
+        billDetail.setServiceFee(serviceFeeRepo.findById(i).get());
+        billDetail.setBill(bill);
+        billDetailRepo.save(billDetail);
+      }
     }
   }
-
-
-
 }

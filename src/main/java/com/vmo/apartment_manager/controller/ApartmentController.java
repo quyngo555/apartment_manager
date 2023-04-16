@@ -44,6 +44,18 @@ public class ApartmentController {
     return ResponseEntity.ok(apartmentService.findApartmentByRepresent(person.getFullName()));
   }
 
+  @GetMapping("/count-apartment-occupied")
+  public ResponseEntity<?> countApartmentInUse(){
+    return ResponseEntity.ok(apartmentService.countApartmentInUse());
+  }
 
+  @GetMapping("/available")
+  public ResponseEntity<?> getApartmentAvailable(){
+    return ResponseEntity.ok(apartmentService.getApartmentsAvailable());
+  }
 
+  @GetMapping("/un-available")
+  public ResponseEntity<?> getApartmentUnAvailable(){
+    return ResponseEntity.ok(apartmentService.getApartmentsUnAvailable());
+  }
 }

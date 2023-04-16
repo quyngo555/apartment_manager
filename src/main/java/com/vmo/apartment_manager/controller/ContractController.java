@@ -62,4 +62,8 @@ public class ContractController {
     return ResponseEntity.ok(contractService.findContractByCreatedBetween(startDate, endDate));
   }
 
+  @GetMapping("/apartments/{id}/contract")
+  public ResponseEntity<?> getContractActiveByApartmentId(@PathVariable("id")long id){
+    return ResponseEntity.ok(contractService.findContractByApartmentId(id));
+  }
 }

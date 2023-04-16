@@ -109,4 +109,9 @@ public class ContractServiceImpl implements ContractService {
   public List<Contract> findContractByCreatedBetween(Date startDate, Date endDate) {
     return contractRepo.findByCreatedDateBetween(startDate, endDate);
   }
+
+  @Override
+  public Contract findContractByApartmentId(long apartmentId) {
+    return contractRepo.findContractByApartmentId(apartmentId);
+  }
 }

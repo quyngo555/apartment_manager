@@ -5,7 +5,11 @@ import com.vmo.apartment_manager.entity.Bill;
 import com.vmo.apartment_manager.service.BillService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.io.IOException;
+import java.sql.Date;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +32,6 @@ public class BillController {
   @PostMapping("/bills")
   public ResponseEntity<?> add(@RequestBody BillRequest bill) {
     Bill bill1 = billService.add(bill);
-    bill1 = billService.update(bill1.getId(), bill1);
     return ResponseEntity.ok(bill1);
   }
 
@@ -56,5 +59,15 @@ public class BillController {
       }
     }
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/bills/export")
+  public ResponseEntity<?> exportFile(@RequestParam Date startDate, @RequestParam Date endDate){
+    String filename = "bill.xlsx";
+    InputStreamResource file = new InputStreamResource(billService.exportExcel(startDate, endDate));
+    return ResponseEntity.ok()
+        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+        .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+        .body(file);
   }
 }

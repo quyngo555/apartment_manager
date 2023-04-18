@@ -17,7 +17,7 @@ public interface ApartmentRepository extends JpaRepository<Apartment, Long> {
 
   @Query(value = "select a from Apartment a "
       + "inner join Contract c on a.id = c.apartment.id "
-      + "where c.person.id = ?1 and c.status = 0")
+      + "where c.person.id = ?1 and c.status = com.vmo.apartment_manager.entity.ContractStatus.ACTIVE")
   Apartment findByRepresentId(long personId);
 
   @Query(value = "select count(a) from Apartment a where a.status = true ")
@@ -25,7 +25,7 @@ public interface ApartmentRepository extends JpaRepository<Apartment, Long> {
 
   @Query(value = "select a from Apartment a "
       + "inner join Contract c on a.id = c.apartment.id "
-      + "where c.id = ?1 and c.status = 0")
+      + "where c.id = ?1 and c.status = com.vmo.apartment_manager.entity.ContractStatus.ACTIVE")
   Optional<Apartment> findApartmentByContractId(long contractId);
 
   @Query(value = "select a from Apartment a where a.status = false")

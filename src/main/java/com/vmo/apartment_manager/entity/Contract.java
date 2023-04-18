@@ -1,6 +1,8 @@
 package com.vmo.apartment_manager.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.util.Date;
@@ -22,6 +24,7 @@ public class Contract extends BaseEntity{
 
   private String code;
 
+  @Enumerated(EnumType.STRING)
   private ContractStatus status;
 
   @ManyToOne

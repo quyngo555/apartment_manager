@@ -32,4 +32,6 @@ public class BillDetail extends BaseEntity {
   @ManyToOne
   @JoinColumn(name = "service_fee_id")
   private ServiceFee serviceFee;
+
+
 }

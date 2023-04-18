@@ -18,7 +18,7 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
 
   @Query("select p from Person p "
       + "inner join Contract c on c.person.id = p.id "
-      + "where p.id = ?1 and c.status = 0")
+      + "where p.id = ?1 and c.status = com.vmo.apartment_manager.entity.ContractStatus.ACTIVE")
   Person findRepresentByContractId(long contractId);
 
   @Query(value = "select p from Person p where p.contractId = ?1 and p.status = true")
@@ -30,11 +30,11 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
 
   @Query(value = "select p from Person p "
       + "inner join Contract c on p.id = c.person.id "
-      + "where c.status = 0 and p.fullName like %?1%")
+      + "where c.status = com.vmo.apartment_manager.entity.ContractStatus.ACTIVE and p.fullName like %?1%")
   List<Person> findRepresentByName(String representName);
 
   @Query(value = "select p from Person p "
-      + "inner join Contract c on c.person.id = p.id where c.status = 0")
+      + "inner join Contract c on c.person.id = p.id where c.status = com.vmo.apartment_manager.entity.ContractStatus.ACTIVE")
   List<Person> findRepresentWithPagination(Pageable pageable);
 
 

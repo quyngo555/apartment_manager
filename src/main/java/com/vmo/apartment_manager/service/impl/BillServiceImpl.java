@@ -1,12 +1,14 @@
 package com.vmo.apartment_manager.service.impl;
 
 import com.vmo.apartment_manager.constant.ConstantError;
+import com.vmo.apartment_manager.entity.TypeService;
 import com.vmo.apartment_manager.payload.request.BillRequest;
 import com.vmo.apartment_manager.entity.Bill;
 import com.vmo.apartment_manager.entity.BillDetail;
 import com.vmo.apartment_manager.entity.Contract;
 import com.vmo.apartment_manager.entity.ServiceFee;
 import com.vmo.apartment_manager.exception.NotFoundException;
+import com.vmo.apartment_manager.payload.response.BillResponse;
 import com.vmo.apartment_manager.repository.BillDetailRepository;
 import com.vmo.apartment_manager.repository.BillRepository;
 import com.vmo.apartment_manager.repository.ContractRepository;
@@ -22,6 +24,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -52,6 +55,7 @@ public class BillServiceImpl implements BillService {
   BillDetailService billDetailService;
 
   @Override
+  @Transactional(rollbackFor = {Exception.class, Throwable.class})
   public Bill add(BillRequest bill) {
     Bill bill1 = new Bill();
     bill1.setTermPayment(bill.getTermPayment());
@@ -62,6 +66,7 @@ public class BillServiceImpl implements BillService {
     bill1.setNote(bill.getNote());
     List<BillDetail> billDetails = new ArrayList<>();
     List<Long> serviceFeeIds = new ArrayList<>();
+    double total = 0;
     for(BillDetail billDetail: bill.getBillDetailList()){
       if(serviceFeeIds.contains(billDetail.getServiceFee().getId()))
         throw new NotFoundException(ConstantError.SERVICE_EXISTS + billDetail.getServiceFee().getId());
@@ -69,9 +74,14 @@ public class BillServiceImpl implements BillService {
       ServiceFee serviceFee = serviceFeeRepo.findById(billDetail.getServiceFee().getId()).get();
       billDetail.setSubTotal(serviceFee.getPrice()*billDetail.getConsume());
       billDetail.setConsume(billDetail.getConsume());
+      billDetail.setBill(bill1);
+      total += billDetail.getSubTotal();
+      bill1.setTotal(total);
+
       billDetails.add(billDetail);
     }
     billDetailRepo.saveAll(billDetails);
+    billRepo.save(bill1);
 
     return bill1;
   }
@@ -97,8 +107,8 @@ public class BillServiceImpl implements BillService {
   }
 
   @Override
-  public List<Bill> findAll() {
-     return billRepo.findAll();
+  public List<BillResponse> findAll() {
+     return billRepo.findAll().stream().map(BillResponse::new).collect(Collectors.toList());
 
   }
 
@@ -138,8 +148,13 @@ public class BillServiceImpl implements BillService {
             case 0:
               String apartmentCode = currentCell.getStringCellValue();
               Contract contract = contractRepo.findContractByApartmentCode(apartmentCode);
-              bill.setContract(contract);
-              bill = billRepo.save(bill);
+              if(contract != null){
+                bill.setContract(contract);
+                bill = billRepo.save(bill);
+              }else{
+                throw new NotFoundException(ConstantError.CONTRACT_NOT_FOUND);
+              }
+
               break;
 
             case 1:
@@ -147,11 +162,14 @@ public class BillServiceImpl implements BillService {
               ServiceFee serviceFee = serviceFeeRepo.findById(1l).get();
               BillDetail billDetail = new BillDetail();
               billDetail.setConsume(electricNum);
-              billDetail.setBill(bill);
-              billDetail.setServiceFee(serviceFee);
-              billDetail.setSubTotal(billDetail.getConsume()*serviceFee.getPrice());
-              billDetail = billDetailRepo.save(billDetail);
-              billDetails.add(billDetail);
+              if(bill != null){
+                billDetail.setBill(bill);
+                billDetail.setServiceFee(serviceFee);
+                billDetail.setSubTotal(billDetail.getConsume()*serviceFee.getPrice());
+                billDetail = billDetailRepo.save(billDetail);
+                billDetails.add(billDetail);
+              }
+
               break;
 
             case 2:
@@ -159,11 +177,13 @@ public class BillServiceImpl implements BillService {
               ServiceFee serviceFee1 = serviceFeeRepo.findById(2l).get();
               BillDetail billDetail1 = new BillDetail();
               billDetail1.setConsume(waterNum);
-              billDetail1.setBill(bill);
-              billDetail1.setServiceFee(serviceFee1);
-              billDetail1.setSubTotal(billDetail1.getConsume()*serviceFee1.getPrice());
-              billDetail1 = billDetailRepo.save(billDetail1);
-              billDetails.add(billDetail1);
+              if(bill != null){
+                billDetail1.setBill(bill);
+                billDetail1.setServiceFee(serviceFee1);
+                billDetail1.setSubTotal(billDetail1.getConsume()*serviceFee1.getPrice());
+                billDetail1 = billDetailRepo.save(billDetail1);
+                billDetails.add(billDetail1);
+              }
               break;
 
 
@@ -196,9 +216,11 @@ public class BillServiceImpl implements BillService {
     return true;
   }
 
+  @Override
   public ByteArrayInputStream exportExcel(Date startDate, Date endDate) {
 
-    try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream();) {
+    try (Workbook workbook = new XSSFWorkbook();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();) {
       Sheet sheet = workbook.createSheet(SHEET);
 
       // Header
@@ -216,15 +238,16 @@ public class BillServiceImpl implements BillService {
 
         row.createCell(0).setCellValue(bill.getContract().getApartment().getCode());
         for(BillDetail billDetail: bill.getBillDetailList()){
-          if(billDetail.getServiceFee().getName() .equals("ELECTRICITY")){
+          if(billDetail.getServiceFee().getName() == TypeService.ELECTRICITY){
             row.createCell(1).setCellValue(billDetail.getConsume());
-            row.createCell(1).setCellValue(billDetail.getServiceFee().getPrice());
+            row.createCell(2).setCellValue(billDetail.getServiceFee().getPrice());
           }
-          if(billDetail.getServiceFee().getName() .equals("WATER")){
-            row.createCell(1).setCellValue(billDetail.getConsume());
-            row.createCell(1).setCellValue(billDetail.getServiceFee().getPrice());
+          if(billDetail.getServiceFee().getName() == TypeService.WATER){
+            row.createCell(3).setCellValue(billDetail.getConsume());
+            row.createCell(4).setCellValue(billDetail.getServiceFee().getPrice());
           }
         }
+        row.createCell(5).setCellValue(bill.getTotal());
       }
 
       workbook.write(out);

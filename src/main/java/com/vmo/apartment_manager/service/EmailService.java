@@ -1,10 +1,7 @@
 package com.vmo.apartment_manager.service;
 
-import com.vmo.apartment_manager.entity.Apartment;
-import com.vmo.apartment_manager.entity.Bill;
-import com.vmo.apartment_manager.entity.Person;
-import java.util.List;
+import com.vmo.apartment_manager.entity.BillDetail;
 
 public interface EmailService {
-  String sendMail(Bill bill);
+  String sendMail(BillDetail billDetail);
 }

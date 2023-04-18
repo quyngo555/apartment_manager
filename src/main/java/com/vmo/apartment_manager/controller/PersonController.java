@@ -51,11 +51,16 @@ public class PersonController {
     return ResponseEntity.ok(personService.getPersonByName(personName));
   }
 
-  @GetMapping("/persons/persons")
+  @GetMapping("/persons/represent")
   public ResponseEntity<?> getRepresent(@RequestParam(defaultValue = "1") Integer pageNo,
       @RequestParam(defaultValue = "10") Integer pageSize,
       @RequestParam(defaultValue = "id") String sortBy){
     return ResponseEntity.ok(personService.getRepresent(pageNo, pageSize, sortBy));
+  }
+
+  @GetMapping("/represent/{id}/persons")
+  public ResponseEntity<?> getPersonsByRepresent(@PathVariable("id") long id){
+    return ResponseEntity.ok(personService.getPersonsByRepresent(id));
   }
 
 

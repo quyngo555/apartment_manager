@@ -25,7 +25,7 @@ public interface ApartmentRepository extends JpaRepository<Apartment, Long> {
 
   @Query(value = "select a from Apartment a "
       + "inner join Contract c on a.id = c.apartment.id "
-      + "where c.id = ?1 and c.status = 1")
+      + "where c.id = ?1 and c.status = 0")
   Optional<Apartment> findApartmentByContractId(long contractId);
 
   @Query(value = "select a from Apartment a where a.status = false")

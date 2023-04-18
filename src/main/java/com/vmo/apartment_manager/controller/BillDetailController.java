@@ -2,6 +2,7 @@ package com.vmo.apartment_manager.controller;
 
 import com.vmo.apartment_manager.entity.BillDetail;
 import com.vmo.apartment_manager.service.BillDetailService;
+import com.vmo.apartment_manager.service.BillService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,15 +20,21 @@ public class BillDetailController {
 
   @Autowired
   BillDetailService billDetailService;
+  @Autowired
+  BillService billService;
 
   @PostMapping("/bill-details")
   public ResponseEntity<?> add(@RequestBody BillDetail billDetail) {
-    return ResponseEntity.ok(billDetailService.add(billDetail));
+    BillDetail billDetail1 = billDetailService.add(billDetail);
+    billService.update(billDetail1.getBill().getId(), billDetail1.getBill());
+    return ResponseEntity.ok(billDetail1);
   }
 
   @PutMapping("/bill-details/{id}")
   public ResponseEntity<?> update(@PathVariable("id") long id, @RequestBody BillDetail billDetail) {
-    return ResponseEntity.ok(billDetailService.update(id, billDetail));
+    BillDetail billDetail1 = billDetailService.add(billDetail);
+    billService.update(billDetail1.getBill().getId(), billDetail1.getBill());
+    return ResponseEntity.ok(billDetail1);
   }
 
 }

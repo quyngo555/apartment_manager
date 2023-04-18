@@ -34,9 +34,12 @@ public class ApartmentController {
     return ResponseEntity.ok(apartmentService.findById(id));
   }
 
-  @PostMapping("/search-by-name")
-  public ResponseEntity<?> getApartmentByName(@RequestBody Apartment apartment) {
-    return ResponseEntity.ok(apartmentService.findApartmentByName(apartment));
+  @GetMapping("/search-by-name")
+  public ResponseEntity<?> getApartmentByName(@RequestParam String apartmentName,
+      @RequestParam(defaultValue = "1") Integer pageNo,
+      @RequestParam(defaultValue = "10") Integer pageSize,
+      @RequestParam(defaultValue = "id") String sortBy) {
+    return ResponseEntity.ok(apartmentService.findApartmentByName(apartmentName, pageNo, pageSize, sortBy));
   }
 
   @PostMapping("/search-by-represent")

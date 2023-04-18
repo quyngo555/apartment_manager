@@ -3,6 +3,7 @@ package com.vmo.apartment_manager.service.impl;
 import com.vmo.apartment_manager.constant.ConstantError;
 import com.vmo.apartment_manager.entity.Apartment;
 import com.vmo.apartment_manager.entity.Contract;
+import com.vmo.apartment_manager.entity.ContractStatus;
 import com.vmo.apartment_manager.entity.Person;
 import com.vmo.apartment_manager.exception.NotFoundException;
 import com.vmo.apartment_manager.repository.ApartmentRepository;
@@ -31,19 +32,26 @@ public class ContractServiceImpl implements ContractService {
   PersonRepository personRepo;
 
   @Override
-  public Contract add(Contract contract) throws Exception {
+  public Contract add(Contract contract, boolean liveHere) throws Exception {
     Apartment apartment = apartmentRepo.findById(contract.getApartment().getId()).get();
     if(contractRepo.checkContractActiveByApartmentId(apartment.getId()) == 0){
-      apartment.setStatus(1);
+      apartment.setStatus(true);
       contract.setApartment(apartment);
     }else{
       throw new Exception(ConstantError.CONTRACT_EXISTS);
     }
+    contract.setStatus(ContractStatus.ACTIVE);
     Person person = personRepo.findById(contract.getPerson().getId()).get();
     contract.setCode(contract.getCode());
     contract.setPerson(person);
     apartmentRepo.save(apartment);
-    return contractRepo.save(contract);
+    Contract contract1 = contractRepo.save(contract);
+    if(liveHere == true){
+      person.setContractId(contract1.getId());
+      person.setStatus(true);
+    }
+    personRepo.save(person);
+    return contract1;
   }
 
   @Override
@@ -84,7 +92,7 @@ public class ContractServiceImpl implements ContractService {
     Contract contract = contractRepo.findById(id).orElseThrow(() ->{
       throw new NotFoundException(ConstantError.CONTRACT_NOT_FOUND + id);
     });
-    contract.setStatus(0);
+    contract.setStatus(ContractStatus.TERMINATE);
     contractRepo.save(contract);
     return "Change status succedd!";
   }
@@ -95,7 +103,7 @@ public class ContractServiceImpl implements ContractService {
     for(long id: ids){
       Contract contract = contractRepo.findByRepresent(id);
       if(contract != null){
-        contract.setStatus(0);
+        contract.setStatus(ContractStatus.TERMINATE);
         contractRepo.save(contract);
       }
 
@@ -112,6 +120,6 @@ public class ContractServiceImpl implements ContractService {
 
   @Override
   public Contract findContractByApartmentId(long apartmentId) {
-    return contractRepo.findContractByApartmentId(apartmentId);
+    return contractRepo.findContractByApartmentId(apartmentId).get();
   }
 }

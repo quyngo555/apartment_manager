@@ -27,7 +27,7 @@ public class Apartment {
   @NotNull(message = "Area is mandatory")
   private Double area;
 
-  private Integer status;
+  private Boolean status;
 
   private String description;
 }

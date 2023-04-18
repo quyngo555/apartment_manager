@@ -24,7 +24,7 @@ public class ContractController {
   ContractService contractService;
 
   @GetMapping("/contracts")
-  public ResponseEntity<?> getAll(@RequestParam(defaultValue = "0") Integer pageNo,
+  public ResponseEntity<?> getAll(@RequestParam(defaultValue = "1") Integer pageNo,
       @RequestParam(defaultValue = "10") Integer pageSize,
       @RequestParam(defaultValue = "id") String sortBy) {
     return ResponseEntity.ok(contractService.getAll(pageNo, pageSize, sortBy));
@@ -36,8 +36,8 @@ public class ContractController {
   }
 
   @PostMapping("/contracts")
-  public ResponseEntity<?> add(@RequestBody Contract contract) throws Exception {
-    return ResponseEntity.ok(contractService.add(contract));
+  public ResponseEntity<?> add(@RequestBody Contract contract, @RequestParam Boolean liveHere) throws Exception {
+    return ResponseEntity.ok(contractService.add(contract,liveHere ));
   }
 
   @PutMapping("/contracts/{id}")

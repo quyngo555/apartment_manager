@@ -1,18 +1,19 @@
 package com.vmo.apartment_manager.service.impl;
 
 import com.vmo.apartment_manager.constant.ConstantError;
-import com.vmo.apartment_manager.dto.PersonDto;
 import com.vmo.apartment_manager.entity.Apartment;
 import com.vmo.apartment_manager.entity.Contract;
 import com.vmo.apartment_manager.entity.Person;
 import com.vmo.apartment_manager.exception.NotFoundException;
+import com.vmo.apartment_manager.payload.request.PersonRequest;
+import com.vmo.apartment_manager.payload.response.PersonResponse;
 import com.vmo.apartment_manager.repository.ApartmentRepository;
 import com.vmo.apartment_manager.repository.ContractRepository;
 import com.vmo.apartment_manager.repository.PersonRepository;
 import com.vmo.apartment_manager.service.PersonService;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,18 +34,10 @@ public class PersonServiceImpl implements PersonService {
 
 
   @Override
-  public PersonDto add(Person person) {
+  public PersonResponse add(PersonRequest person) {
     Person person1 = new Person();
-    Contract contract = contractRepo.findContractByApartmentId(person.getApartmentId());
-    if (contract == null) {
-      person1.setParentId(null);
-    } else {
-      person1.setParentId(personRepo.getrepresentIdByApartmentId(person.getApartmentId()));
-    }
-    if (person.getParentId() == null && (person.getEmail() == null || person.getPhone() == null)) {
-      throw new NotFoundException(ConstantError.LACK_OF_EMAIL_PHONE);
-    }
-    person1.setStatus(1);
+
+    person1.setStatus(false);
     person1.setCin(person.getCin());
     person1.setDob(person.getDob());
     person1.setCarrer(person.getCarrer());
@@ -52,17 +45,28 @@ public class PersonServiceImpl implements PersonService {
     person1.setFullName(person.getFullName());
     person1.setPhone(person.getPhone());
     person1.setEmail(person.getEmail());
-    person1.setApartmentId(person.getApartmentId());
     Apartment apartment = apartmentRepo.findById(person.getApartmentId()).get();
-    person1 = personRepo.save(person1);
-    return new PersonDto(person1, apartment.getCode());
+    Optional<Contract> contract = contractRepo.findContractByApartmentId(apartment.getId());
+
+    if(contract.isEmpty() == false){
+      person1.setContractId(contract.get().getId());
+      person1.setStatus(true);
+      person1 = personRepo.save(person1);
+      return new PersonResponse(person1, apartment.getCode());
+    }else{
+      person1 = personRepo.save(person1);
+      return new PersonResponse(person1);
+    }
+
+
   }
 
   @Override
-  public PersonDto update(Long id, Person person) {
+  public PersonResponse update(Long id, Person person) {
     Person person1 = personRepo.findById(id).orElseThrow(() -> {
       throw new NotFoundException(ConstantError.PERSON_NOT_FOUND + id);
     });
+    Apartment apartment = null;
     person1.setPhone(person.getPhone());
     person1.setFullName(person.getFullName());
     person1.setDob(person.getDob());
@@ -71,73 +75,26 @@ public class PersonServiceImpl implements PersonService {
     person1.setGender(person.getGender());
     person1.setCarrer(person.getCarrer());
     person1 = personRepo.save(person1);
-    Apartment apartment = apartmentRepo.findById(person.getApartmentId()).orElseThrow(() -> {
-      throw new NotFoundException(ConstantError.APARTMENT_NOT_FOUND + id);
-    });
-    PersonDto dto = new PersonDto(person1, apartment.getCode());
-    return dto;
-  }
-
-  @Override
-  public List<PersonDto> getAll(Integer pageNo, Integer pageSize, String sortBy) {
-    Pageable paging = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy));
-    List<Person> personList = personRepo.findAll(paging).getContent();
-    List<PersonDto> personDtos = new ArrayList<>();
-    for (Person person : personList) {
-      Apartment apartment = apartmentRepo.findById(person.getApartmentId()).get();
-      personDtos.add(new PersonDto(person, apartment.getCode()));
+    if(person1.getContractId() != null){
+      person1.setStatus(person.getStatus());
+      apartment = apartmentRepo.findApartmentByContractId(person1.getContractId()).get();
+      return new PersonResponse(person1, apartment.getCode());
+    }else{
+      return new PersonResponse(person1);
     }
-    return personDtos;
   }
 
   @Override
-  public PersonDto findById(Long id) {
-    Person person = personRepo.findById(id).orElseThrow(() -> {
-      throw new NotFoundException(ConstantError.PERSON_NOT_FOUND + id);
-    });
-    Apartment apartment = apartmentRepo.findById(person.getId()).get();
-    return new PersonDto(person, apartment.getCode());
-  }
-
-  @Override
-  public List<PersonDto> getAllByApartmentId(Long id, Integer pageNo, Integer pageSize,
-      String sortBy) {
-    Pageable paging = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy));
+  public List<PersonResponse> getPersonsActiveByApartmentId(long id) {
     Apartment apartment = apartmentRepo.findById(id).get();
-    List<Person> personList = personRepo.findPersonByApartmentId(id);
-    List<PersonDto> personDtos = new ArrayList<>();
-    for (Person person : personList) {
-      personDtos.add(new PersonDto(person, apartment.getCode()));
-    }
-    return personDtos;
-  }
+    Contract contract = contractRepo.findContractByApartmentId(apartment.getId()).get();
+    List<Person> personList = personRepo.findAllByContractId(contract.getId());
 
-  @Override
-  public List<PersonDto> getPersonsActiveByApartmentId(long id) {
-    List<Person> personList = personRepo.findPersonByApartmentId(id);
-    Apartment apartment = apartmentRepo.findById(id).get();
-    List<PersonDto> personDtos = new ArrayList<>();
+    List<PersonResponse> personResponses = new ArrayList<>();
     for (Person person : personList) {
-      if (person.getStatus() == 1) {
-        personDtos.add(new PersonDto(person, apartment.getName()));
-      }
+        personResponses.add(new PersonResponse(person, apartment.getName()));
     }
-    return personDtos;
-  }
-
-  @Override
-  public List<PersonDto> getPersonsUnActiveByApartmentId(long id, Integer pageNo, Integer pageSize,
-      String sortBy) {
-//    Pageable paging = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy));
-    Apartment apartment = apartmentRepo.findById(id).get();
-    List<Person> personList = personRepo.findPersonByApartmentId(id);
-    List<PersonDto> personDtos = new ArrayList<>();
-    for (Person person : personList) {
-      if (person.getStatus() == 0) {
-        personDtos.add(new PersonDto(person, apartment.getName()));
-      }
-    }
-    return personDtos;
+    return personResponses;
   }
 
   @Override
@@ -145,7 +102,7 @@ public class PersonServiceImpl implements PersonService {
     Person person = personRepo.findById(id).orElseThrow(() -> {
       throw new NotFoundException(ConstantError.PERSON_NOT_FOUND + id);
     });
-    person.setStatus(0);
+    person.setStatus(false);
     personRepo.save(person);
     return "Delete Succedd.";
   }
@@ -154,43 +111,42 @@ public class PersonServiceImpl implements PersonService {
   public String deletePersonsById(long[] ids) {
     for (long id : ids) {
       Person person = personRepo.findById(id).get();
-      person.setStatus(0);
+      person.setStatus(false);
       personRepo.save(person);
     }
     return "Delete succedd!";
   }
 
   @Override
-  public List<PersonDto> getPersonByName(String namePerson) {
+  public List<PersonResponse> getPersonByName(String namePerson) {
     List<Person> personList = personRepo.getPersonByName(namePerson);
-    List<PersonDto> personDtos = new ArrayList<>();
+    List<PersonResponse> personResponses = new ArrayList<>();
     for (Person person : personList) {
-        Apartment apartment = apartmentRepo.findById(person.getApartmentId()).get();
-        personDtos.add(new PersonDto(person, apartment.getName()));
+      Apartment apartment = apartmentRepo.findApartmentByContractId(person.getContractId()).get();
+        personResponses.add(new PersonResponse(person, apartment.getName()));
     }
-    return personDtos;
+    return personResponses;
   }
 
   @Override
-  public List<PersonDto> getRepresent() {
-    List<Person> personList = personRepo.findRepresent();
-    List<PersonDto> personDtos = new ArrayList<>();
+  public List<PersonResponse> getRepresent(Integer pageNo, Integer pageSize, String sortBy) {
+    Pageable paging = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy));
+    List<Person> personList = personRepo.findRepresentWithPagination(paging);
+    List<PersonResponse> personResponses = new ArrayList<>();
     for(Person person: personList){
-      Apartment apartment = apartmentRepo.findById(person.getApartmentId()).get();
-      personDtos.add(new PersonDto(person, apartment.getCode()));
+      Optional<Apartment> apartment = apartmentRepo.findApartmentByContractId(person.getId());
+      if(apartment.isEmpty() == false)
+      personResponses.add(new PersonResponse(person, apartment.get().getCode()));
     }
-    return personDtos;
+    return personResponses;
   }
 
   @Override
-  public List<PersonDto> findPersonByCreatedBetween(Date startDate, Date endDate) {
-    List<Person> personList=  personRepo.findByCreatedDateBetween(startDate, endDate);
-    List<PersonDto> personDtos = new ArrayList<>();
-    for (Person person : personList) {
-      Apartment apartment = apartmentRepo.findById(person.getApartmentId()).get();
-      personDtos.add(new PersonDto(person, apartment.getCode()));
-    }
-    return personDtos;
+  public List<PersonResponse> getPersonsByRepresent(long representId) {
+    return personRepo.findPersonsByRepresentId(representId).stream()
+        .map(PersonResponse::new)
+        .toList();
+
   }
 
 

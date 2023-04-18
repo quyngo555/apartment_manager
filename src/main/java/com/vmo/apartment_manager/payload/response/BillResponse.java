@@ -1,12 +1,11 @@
-package com.vmo.apartment_manager.dto;
+package com.vmo.apartment_manager.payload.response;
 
 import com.vmo.apartment_manager.entity.Bill;
 import com.vmo.apartment_manager.entity.BillDetail;
-import com.vmo.apartment_manager.entity.Contract;
 import java.sql.Date;
 import java.util.List;
 
-public class BillDto {
+public class BillResponse {
   private Double total;
   private int stauts;
   private Date paidDate;
@@ -14,7 +13,7 @@ public class BillDto {
   private List<BillDetail> billDetails;
   private String  apartmentName;
 
-  public BillDto(Bill bill) {
+  public BillResponse(Bill bill) {
     this.total = bill.getTotal();
     this.stauts = bill.getStauts();
     this.paidDate = bill.getPaidDate();

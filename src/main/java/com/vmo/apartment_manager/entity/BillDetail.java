@@ -26,11 +26,10 @@ public class BillDetail extends BaseEntity {
 
   @ManyToOne
   @JoinColumn(name = "bill_id")
-  @JsonIgnore
+  @JsonBackReference
   private Bill bill;
 
   @ManyToOne
   @JoinColumn(name = "service_fee_id")
-  @JsonBackReference
   private ServiceFee serviceFee;
 }

@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface ContractService {
-  Contract add(Contract contract) throws Exception;
+  Contract add(Contract contract, boolean liveHere) throws Exception;
   Contract update(Long id, Contract contract);
   Contract findById(Long id);
   List<Contract> getAll(Integer pageNo, Integer pageSize, String sortBy);

@@ -20,11 +20,9 @@ public class Contract extends BaseEntity{
 
   private Date endDate;
 
-  private Long idUser;
-
   private String code;
 
-  private Integer status;
+  private ContractStatus status;
 
   @ManyToOne
   @JoinColumn(name = "apartment_id")

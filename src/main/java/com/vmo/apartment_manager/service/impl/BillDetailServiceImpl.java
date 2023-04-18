@@ -1,10 +1,12 @@
 package com.vmo.apartment_manager.service.impl;
 
 import com.vmo.apartment_manager.constant.ConstantError;
+import com.vmo.apartment_manager.entity.Bill;
 import com.vmo.apartment_manager.entity.BillDetail;
 import com.vmo.apartment_manager.entity.ServiceFee;
 import com.vmo.apartment_manager.exception.NotFoundException;
 import com.vmo.apartment_manager.repository.BillDetailRepository;
+import com.vmo.apartment_manager.repository.BillRepository;
 import com.vmo.apartment_manager.repository.ServiceFeeRepository;
 import com.vmo.apartment_manager.service.BillDetailService;
 import com.vmo.apartment_manager.service.BillService;
@@ -21,8 +23,6 @@ public class BillDetailServiceImpl implements BillDetailService {
   @Autowired
   ServiceFeeRepository serviceFeeRepo;
 
-  @Autowired
-  BillService billService;
 
 
   @Override
@@ -30,7 +30,6 @@ public class BillDetailServiceImpl implements BillDetailService {
     ServiceFee serviceFee = serviceFeeRepo.findById(billDetail.getServiceFee().getId()).get();
     billDetail.setSubTotal(billDetail.getConsume() * serviceFee.getPrice());
     BillDetail billDetail1 =  billDetailRepo.save(billDetail);
-    billService.update(billDetail1.getId(), billDetail1.getBill());
     return billDetail1;
   }
 
@@ -42,7 +41,6 @@ public class BillDetailServiceImpl implements BillDetailService {
     billDetail1.setConsume(billDetail.getConsume());
     billDetail1.setSubTotal(billDetail.getConsume() * billDetail.getServiceFee().getPrice());
     billDetail1 =  billDetailRepo.save(billDetail1);
-    billService.update(billDetail1.getId(), billDetail1.getBill());
     return billDetail1;
   }
 

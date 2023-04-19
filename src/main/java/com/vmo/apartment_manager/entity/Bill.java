@@ -15,10 +15,15 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Bill extends BaseEntity {
+
   private Double total;
+
   private Boolean stauts;
+
   private Date paidDate;
+
   private String note;
+
   private Date termPayment;
   @ManyToOne
   @JoinColumn(name = "contract_id")

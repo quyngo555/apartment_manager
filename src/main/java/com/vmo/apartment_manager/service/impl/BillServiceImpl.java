@@ -155,21 +155,28 @@ public class BillServiceImpl implements BillService {
           switch (cellIdx) {
             case 0:
               String apartmentCode = currentCell.getStringCellValue();
+              if(apartmentCode == null)
+                throw new NotFoundException(ConstantError.APARTMENT_NOT_FOUND + apartmentCode);
               Contract contract = contractRepo.findContractByApartmentCode(apartmentCode);
+              if(contract == null){
+                throw new NotFoundException(ConstantError.CONTRACT_NOT_EXISTS_IN_APARTMENT + apartmentCode);
+              }
               if (contract != null) {
                 bill.setContract(contract);
+                bill.setStauts(false);
                 bill = billRepo.save(bill);
               } else {
-                throw new NotFoundException(ConstantError.CONTRACT_NOT_FOUND);
+                throw new NotFoundException(ConstantError.CONTRACT_NOT_FOUND + "in apartment: " + apartmentCode);
               }
 
               break;
 
             case 1:
               Double electricNum = currentCell.getNumericCellValue();
-//              if(electricNum == null)
-//                throw new
-              ServiceFee serviceFee = serviceFeeRepo.findById(1l).get();
+              if(electricNum == null){
+                throw new NotFoundException(ConstantError.FILE_IMPORT_ERROR + cellIdx);
+              }
+              ServiceFee serviceFee = serviceFeeRepo.findServiceFeeByName("ELECTRICITY");
               BillDetail billDetail = new BillDetail();
               billDetail.setConsume(electricNum);
               if (bill != null) {
@@ -184,7 +191,10 @@ public class BillServiceImpl implements BillService {
 
             case 2:
               Double waterNum = currentCell.getNumericCellValue();
-              ServiceFee serviceFee1 = serviceFeeRepo.findById(2l).get();
+              if(waterNum == null){
+                throw new NotFoundException(ConstantError.FILE_IMPORT_ERROR + cellIdx);
+              }
+              ServiceFee serviceFee1 = serviceFeeRepo.findServiceFeeByName("WATER");
               BillDetail billDetail1 = new BillDetail();
               billDetail1.setConsume(waterNum);
               if (bill != null) {

@@ -14,6 +14,4 @@ public class ApartmentResponse {
   private int personInApartment;
   private String apartmentCode;
   private Double area;
-
-
 }

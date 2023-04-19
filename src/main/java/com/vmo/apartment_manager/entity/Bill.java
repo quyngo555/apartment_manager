@@ -16,7 +16,7 @@ import lombok.Setter;
 @Setter
 public class Bill extends BaseEntity {
   private Double total;
-  private int stauts;
+  private Boolean stauts;
   private Date paidDate;
   private String note;
   private Date termPayment;

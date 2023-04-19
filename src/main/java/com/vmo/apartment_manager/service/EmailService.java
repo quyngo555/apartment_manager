@@ -1,7 +1,9 @@
 package com.vmo.apartment_manager.service;
 
+import com.vmo.apartment_manager.entity.Bill;
 import com.vmo.apartment_manager.entity.BillDetail;
 
 public interface EmailService {
-  String sendMail(BillDetail billDetail);
+  String sendBill(Bill bill);
+  void sendContractWarning();
 }

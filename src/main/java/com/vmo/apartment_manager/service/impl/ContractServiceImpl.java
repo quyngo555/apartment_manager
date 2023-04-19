@@ -10,12 +10,15 @@ import com.vmo.apartment_manager.repository.ApartmentRepository;
 import com.vmo.apartment_manager.repository.ContractRepository;
 import com.vmo.apartment_manager.repository.PersonRepository;
 import com.vmo.apartment_manager.service.ContractService;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -121,5 +124,20 @@ public class ContractServiceImpl implements ContractService {
   @Override
   public Contract findContractByApartmentId(long apartmentId) {
     return contractRepo.findContractByApartmentId(apartmentId).get();
+  }
+
+  @Scheduled(cron = "0 10 01 ? * ?") // Run at 10h on 01th of month
+  public void autoChangeStatus(){
+    List<Contract> contracts = contractRepo.findContractActive();
+    for(Contract contract: contracts){
+      Date endDate = contract.getEndDate();
+      Date currentDate = new Date();
+      long getDiff = endDate.getTime() - currentDate.getTime() ;
+      long getDayDiff = TimeUnit.MILLISECONDS.toDays(getDiff);
+      if(getDayDiff < 30){
+        contract.setStatus(ContractStatus.WARNING);
+
+      }
+    }
   }
 }

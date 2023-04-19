@@ -66,4 +66,10 @@ public class ContractController {
   public ResponseEntity<?> getContractActiveByApartmentId(@PathVariable("id")long id){
     return ResponseEntity.ok(contractService.findContractByApartmentId(id));
   }
+
+  @GetMapping("/contracts/changeStatus")
+  public ResponseEntity<?> changeStatus(){
+    contractService.autoChangeStatus();
+    return ResponseEntity.noContent().build();
+  }
 }

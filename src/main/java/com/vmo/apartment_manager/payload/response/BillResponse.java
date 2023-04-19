@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 public class BillResponse implements Serializable {
   private Double total;
-  private int stauts;
+  private Boolean stauts;
   private Date paidDate;
   private String note;
   private Date termPayment;

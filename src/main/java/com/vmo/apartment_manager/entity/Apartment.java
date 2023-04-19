@@ -21,7 +21,7 @@ public class Apartment {
   @Column(unique=true)
   private String name;
 
-  @Column(unique=true)
+  @Column(nullable = false, unique = true)
   private String code;
 
   @NotNull(message = "Area is mandatory")

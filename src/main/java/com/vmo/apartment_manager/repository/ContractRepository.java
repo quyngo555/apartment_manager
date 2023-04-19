@@ -26,8 +26,8 @@ public interface ContractRepository extends JpaRepository<Contract, Long> {
       + "where c.status = com.vmo.apartment_manager.entity.ContractStatus.ACTIVE and a.id = ?1")
   int checkContractActiveByApartmentId(Long idApartment);
 
-//  @Query(value = "select c from Contract c where c.status > 0")
-//  List<Contract> findContractActive();
+  @Query(value = "select c from Contract c where c.status = com.vmo.apartment_manager.entity.ContractStatus.ACTIVE")
+  List<Contract> findContractActive();
 
   List<Contract> findByCreatedDateBetween(Date startDate, Date endDate);
 

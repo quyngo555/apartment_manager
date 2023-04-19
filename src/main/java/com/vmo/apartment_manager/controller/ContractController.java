@@ -1,6 +1,8 @@
 package com.vmo.apartment_manager.controller;
 
 import com.vmo.apartment_manager.entity.Contract;
+import com.vmo.apartment_manager.entity.Person;
+import com.vmo.apartment_manager.payload.request.ContractRequest;
 import com.vmo.apartment_manager.service.ContractService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.sql.Date;
@@ -36,8 +38,8 @@ public class ContractController {
   }
 
   @PostMapping("/contracts")
-  public ResponseEntity<?> add(@RequestBody Contract contract, @RequestParam Boolean liveHere) throws Exception {
-    return ResponseEntity.ok(contractService.add(contract,liveHere ));
+  public ResponseEntity<?> add(@RequestBody ContractRequest contract) throws Exception {
+    return ResponseEntity.ok(contractService.add(contract));
   }
 
   @PutMapping("/contracts/{id}")
@@ -45,9 +47,9 @@ public class ContractController {
     return ResponseEntity.ok(contractService.update(id, contract));
   }
 
-  @PutMapping("/contracts/{id}/change-status")
-  public ResponseEntity<?> changeStatus(@PathVariable("id") long id) {
-    return ResponseEntity.ok(contractService.changeStatusById(id));
+  @PutMapping("/contracts/{id}/change-represent")
+  public ResponseEntity<?> changeStatus(@PathVariable("id") long id, @RequestParam long representIdNew) {
+    return ResponseEntity.ok(contractService.changeRepersent(id, representIdNew));
   }
 
   @PutMapping("/contracts/change-status")

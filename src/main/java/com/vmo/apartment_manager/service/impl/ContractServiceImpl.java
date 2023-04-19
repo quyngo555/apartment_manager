@@ -6,6 +6,8 @@ import com.vmo.apartment_manager.entity.Contract;
 import com.vmo.apartment_manager.entity.ContractStatus;
 import com.vmo.apartment_manager.entity.Person;
 import com.vmo.apartment_manager.exception.NotFoundException;
+import com.vmo.apartment_manager.payload.request.ContractRequest;
+import com.vmo.apartment_manager.payload.response.ContractResponse;
 import com.vmo.apartment_manager.repository.ApartmentRepository;
 import com.vmo.apartment_manager.repository.ContractRepository;
 import com.vmo.apartment_manager.repository.PersonRepository;
@@ -19,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,26 +38,33 @@ public class ContractServiceImpl implements ContractService {
   PersonRepository personRepo;
 
   @Override
-  public Contract add(Contract contract, boolean liveHere) throws Exception {
-    Apartment apartment = apartmentRepo.findById(contract.getApartment().getId()).get();
+  @Transactional(rollbackFor = {Exception.class, Throwable.class})
+  public ContractResponse add(ContractRequest contractRequest) throws Exception {
+    Contract contract = new Contract();
+    Apartment apartment = apartmentRepo.findById(contractRequest.getApartment().getId()).get();
     if(contractRepo.checkContractActiveByApartmentId(apartment.getId()) == 0){
       apartment.setStatus(true);
+      apartmentRepo.save(apartment);
       contract.setApartment(apartment);
     }else{
       throw new Exception(ConstantError.CONTRACT_EXISTS);
     }
     contract.setStatus(ContractStatus.ACTIVE);
-    Person person = personRepo.findById(contract.getPerson().getId()).get();
-    contract.setCode(contract.getCode());
+    Person person = personRepo.findById(contractRequest.getPerson().getId()).orElseThrow(() -> {
+      throw new NotFoundException(ConstantError.PERSON_NOT_FOUND + contractRequest.getPerson().getId());
+    });
+    contract.setPriceApartment(contractRequest.getPriceApartment());
+    contract.setStartDate(contractRequest.getStartDate());
+    contract.setEndDate(contractRequest.getEndDate());
+    contract.setCode(contractRequest.getCode());
     contract.setPerson(person);
-    apartmentRepo.save(apartment);
-    Contract contract1 = contractRepo.save(contract);
-    if(liveHere == true){
-      person.setContractId(contract1.getId());
+    contract = contractRepo.save(contract);
+    if(contractRequest.getLiveHere()){
+      person.setContractId(contract.getId());
       person.setStatus(true);
     }
     personRepo.save(person);
-    return contract1;
+    return new ContractResponse(contract);
   }
 
   @Override
@@ -91,13 +101,24 @@ public class ContractServiceImpl implements ContractService {
   }
 
   @Override
-  public String changeStatusById(long id) {
-    Contract contract = contractRepo.findById(id).orElseThrow(() ->{
+  public Contract changeRepersent(long id, long newPresent) {
+    Contract contractOld = contractRepo.findById(id).orElseThrow(() ->{
       throw new NotFoundException(ConstantError.CONTRACT_NOT_FOUND + id);
     });
-    contract.setStatus(ContractStatus.TERMINATE);
-    contractRepo.save(contract);
-    return "Change status succedd!";
+    contractOld.setStatus(ContractStatus.TERMINATE);
+    Person representOld = personRepo.findRepresentByContractId(contractOld.getId());
+    representOld.setStatus(false);
+    contractRepo.save(contractOld);
+    Apartment apartment = apartmentRepo.findApartmentByContractId(contractOld.getId()).get();
+    List<Person> personList = personRepo.findPersonByContractId(contractOld.getId());
+    Contract contractNew = new Contract();
+    contractNew.setStatus(ContractStatus.ACTIVE);
+    contractNew.setApartment(apartment);
+    contractNew.setPerson(personRepo.findById(newPresent).get());
+    contractNew.setPriceApartment(contractOld.getPriceApartment());
+    contractNew.setEndDate(contractOld.getEndDate());
+    contractNew.setStartDate(contractOld.getStartDate());
+    return contractRepo.save(contractNew);
   }
 
   @Override
@@ -107,7 +128,8 @@ public class ContractServiceImpl implements ContractService {
       Contract contract = contractRepo.findByRepresent(id);
       if(contract != null){
         contract.setStatus(ContractStatus.TERMINATE);
-        contractRepo.save(contract);
+        personRepo.findPersonByContractId(contract.getId()).stream()
+            .forEach(person -> person.setStatus(false));
       }
 
     }
@@ -136,8 +158,8 @@ public class ContractServiceImpl implements ContractService {
       long getDayDiff = TimeUnit.MILLISECONDS.toDays(getDiff);
       if(getDayDiff < 30){
         contract.setStatus(ContractStatus.WARNING);
-
       }
     }
   }
+
 }

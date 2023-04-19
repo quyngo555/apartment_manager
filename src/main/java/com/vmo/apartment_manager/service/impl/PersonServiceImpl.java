@@ -45,20 +45,24 @@ public class PersonServiceImpl implements PersonService {
     person1.setFullName(person.getFullName());
     person1.setPhone(person.getPhone());
     person1.setEmail(person.getEmail());
-    Apartment apartment = apartmentRepo.findById(person.getApartmentId()).get();
-    Optional<Contract> contract = contractRepo.findContractByApartmentId(apartment.getId());
 
-    if(contract.isEmpty() == false){
-      person1.setContractId(contract.get().getId());
-      person1.setStatus(true);
-      person1 = personRepo.save(person1);
-      return new PersonResponse(person1, apartment.getCode());
+    if(person.getApartmentId() != null){
+      Apartment apartment = apartmentRepo.findById(person.getApartmentId()).get();
+      Optional<Contract> contract = contractRepo.findContractByApartmentId(apartment.getId());
+      if(contract.isEmpty() == false){
+        person1.setContractId(contract.get().getId());
+        person1.setStatus(true);
+        person1 = personRepo.save(person1);
+        return new PersonResponse(person1, apartment.getCode());
+      }else{
+        person1 = personRepo.save(person1);
+      }
     }else{
       person1 = personRepo.save(person1);
-      return new PersonResponse(person1);
     }
 
 
+    return new PersonResponse(person1);
   }
 
   @Override
@@ -147,6 +151,11 @@ public class PersonServiceImpl implements PersonService {
         .map(PersonResponse::new)
         .toList();
 
+  }
+
+  @Override
+  public List<Person> findAll() {
+    return personRepo.findAll();
   }
 
 

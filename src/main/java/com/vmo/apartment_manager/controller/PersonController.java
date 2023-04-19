@@ -28,6 +28,10 @@ public class PersonController {
   public ResponseEntity<?> add(@RequestBody PersonRequest person){
     return ResponseEntity.ok(personService.add(person));
   }
+  @GetMapping("/persons")
+  public ResponseEntity<?> getAll(){
+    return ResponseEntity.ok(personService.findAll());
+  }
   @PutMapping("/persons/{id}")
   public ResponseEntity<?> update(@PathVariable("id") long id, @RequestBody Person person){
     return ResponseEntity.ok(personService.update(id, person));

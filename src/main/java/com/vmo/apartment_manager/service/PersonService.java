@@ -15,4 +15,5 @@ public interface PersonService {
   List<PersonResponse> getPersonByName(String namePerson);
   List<PersonResponse> getRepresent(Integer pageNo, Integer pageSize, String sortBy);
   List<PersonResponse> getPersonsByRepresent(long representId);
+  List<Person> findAll();
 }

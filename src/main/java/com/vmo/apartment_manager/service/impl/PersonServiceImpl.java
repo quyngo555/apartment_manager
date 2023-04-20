@@ -158,5 +158,13 @@ public class PersonServiceImpl implements PersonService {
     return personRepo.findAll();
   }
 
+  @Override
+  public List<Person> findPersonActive(long apartmentId) {
+    Contract contract = contractRepo.findContractByApartmentId(apartmentId).orElseThrow(()->{
+      throw new NotFoundException(ConstantError.CONTRACT_NOT_EXISTS_IN_APARTMENT + apartmentId);
+    });
+    return personRepo.findPersonByContractId(contract.getId());
+  }
+
 
 }

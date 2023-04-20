@@ -67,5 +67,10 @@ public class PersonController {
     return ResponseEntity.ok(personService.getPersonsByRepresent(id));
   }
 
+  @GetMapping("/apartments/{id}/person-active")
+  public ResponseEntity<?> getPersonActiveInApartment(@PathVariable("id") long id){
+    return ResponseEntity.ok(personService.findPersonActive(id));
+  }
+
 
 }

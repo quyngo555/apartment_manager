@@ -26,7 +26,6 @@ public class BillDetail extends BaseEntity {
   private Double subTotal;
 
   @NotNull(message = "Name is mandatory")
-  @Column(unique=true)
   private Double consume;
 
   @ManyToOne

@@ -132,7 +132,8 @@ public class BillServiceImpl implements BillService {
       Iterator<Row> rows = sheet.iterator();
 
       List<Bill> bills = new ArrayList<Bill>();
-
+      ServiceFee serviceFeeEletric = serviceFeeRepo.findServiceFeeByName(TypeService.ELECTRICITY);
+      ServiceFee serviceFeeWater = serviceFeeRepo.findServiceFeeByName(TypeService.WATER);
       int rowNumber = 0;
       while (rows.hasNext()) {
         Row currentRow = rows.next();
@@ -176,13 +177,12 @@ public class BillServiceImpl implements BillService {
               if(electricNum == null){
                 throw new NotFoundException(ConstantError.FILE_IMPORT_ERROR + cellIdx);
               }
-              ServiceFee serviceFee = serviceFeeRepo.findServiceFeeByName("ELECTRICITY");
               BillDetail billDetail = new BillDetail();
               billDetail.setConsume(electricNum);
               if (bill != null) {
                 billDetail.setBill(bill);
-                billDetail.setServiceFee(serviceFee);
-                billDetail.setSubTotal(billDetail.getConsume() * serviceFee.getPrice());
+                billDetail.setServiceFee(serviceFeeEletric);
+                billDetail.setSubTotal(billDetail.getConsume() * serviceFeeEletric.getPrice());
                 billDetail = billDetailRepo.save(billDetail);
                 billDetails.add(billDetail);
               }
@@ -194,15 +194,15 @@ public class BillServiceImpl implements BillService {
               if(waterNum == null){
                 throw new NotFoundException(ConstantError.FILE_IMPORT_ERROR + cellIdx);
               }
-              ServiceFee serviceFee1 = serviceFeeRepo.findServiceFeeByName("WATER");
-              BillDetail billDetail1 = new BillDetail();
-              billDetail1.setConsume(waterNum);
+
+              BillDetail billDetailWater = new BillDetail();
+              billDetailWater.setConsume(waterNum);
               if (bill != null) {
-                billDetail1.setBill(bill);
-                billDetail1.setServiceFee(serviceFee1);
-                billDetail1.setSubTotal(billDetail1.getConsume() * serviceFee1.getPrice());
-                billDetail1 = billDetailRepo.save(billDetail1);
-                billDetails.add(billDetail1);
+                billDetailWater.setBill(bill);
+                billDetailWater.setServiceFee(serviceFeeWater);
+                billDetailWater.setSubTotal(billDetailWater.getConsume() * serviceFeeWater.getPrice());
+                billDetailWater = billDetailRepo.save(billDetailWater);
+                billDetails.add(billDetailWater);
               }
               break;
 

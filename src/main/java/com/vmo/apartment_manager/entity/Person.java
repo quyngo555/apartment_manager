@@ -20,7 +20,6 @@ public class Person extends BaseEntity{
 
   private Date dob;
 
-  @Size(min = 10, max = 12, message = "The length of phone is not valid")
   private String phone;
 
   @Email(message = "Email must be in the correct format")

@@ -174,10 +174,15 @@ public class ContractServiceImpl implements ContractService {
       Date currentDate = new Date();
       long getDiff = endDate.getTime() - currentDate.getTime() ;
       long getDayDiff = TimeUnit.MILLISECONDS.toDays(getDiff);
-      if(getDayDiff == 0){
+      if(getDayDiff == 30){
+        contract.setStatus(ContractStatus.WARNING);
+
+      }else if(getDayDiff == 0){
         contract.setStatus(ContractStatus.EXPIRED);
-        contractRepo.save(contract);
+        personRepo.findPersonByContractId(contract.getId()).stream()
+            .forEach(person -> person.setStatus(false));
       }
+      contractRepo.save(contract);
     }
   }
 

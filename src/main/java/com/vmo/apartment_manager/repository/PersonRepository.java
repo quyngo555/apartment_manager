@@ -48,4 +48,6 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
       + "inner join Contract c on p.contractId = c.id where c.id = ?1")
   List<Person> findPersonByContractId(long id);
 
+
+
 }

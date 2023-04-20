@@ -8,6 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BillDetailRepository extends JpaRepository<BillDetail, Long> {
 
-  List<BillDetail> findAllByBillId(long id);
 
 }

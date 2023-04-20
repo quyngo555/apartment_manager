@@ -7,16 +7,22 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Entity
 @Getter
 @Setter
 public class Apartment {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+
   @NotNull(message = "Name is mandatory")
   @Column(unique=true)
   private String name;
@@ -30,4 +36,6 @@ public class Apartment {
   private Boolean status;
 
   private String description;
+
+
 }

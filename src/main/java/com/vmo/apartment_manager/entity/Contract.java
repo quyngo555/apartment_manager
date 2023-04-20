@@ -17,11 +17,15 @@ import lombok.ToString;
 @Setter
 public class Contract extends BaseEntity{
 
+  @NotNull(message = "Price apartment is mandatory")
   private double priceApartment;
+
   @NotNull(message = "Area is mandatory")
   private Date startDate;
+
   @NotNull(message = "Area is mandatory")
   private Date endDate;
+
   @NotNull(message = "Area is mandatory")
   private String code;
 

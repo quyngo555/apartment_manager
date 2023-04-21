@@ -1,6 +1,8 @@
 package com.vmo.apartment_manager.controller;
 
+import com.vmo.apartment_manager.constant.ConstantError;
 import com.vmo.apartment_manager.entity.User;
+import com.vmo.apartment_manager.exception.NotFoundException;
 import com.vmo.apartment_manager.jwt.JwtTokenProvider;
 import com.vmo.apartment_manager.payload.request.LoginRequest;
 import com.vmo.apartment_manager.payload.response.LoginResponse;
@@ -26,18 +28,24 @@ public class AuthApi {
   @PostMapping("/login")
   public LoginResponse authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
     // Xác thực thông tin người dùng Request lên
-    Authentication authentication = authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(
-            loginRequest.getUsername(),
-            loginRequest.getPassword()
-        )
-    );
-    // Nếu không xảy ra exception tức là thông tin hợp lệ
-    // Set thông tin authentication vào Security Context
-    SecurityContextHolder.getContext().setAuthentication(authentication);
-    // Trả về jwt cho người dùng.
-    String jwt = tokenProvider.generateToken((User) authentication.getPrincipal());
-    return new LoginResponse(jwt);
+    try{
+      Authentication authentication = authenticationManager.authenticate(
+          new UsernamePasswordAuthenticationToken(
+              loginRequest.getUsername(),
+              loginRequest.getPassword()
+          )
+      );
+      // Nếu không xảy ra exception tức là thông tin hợp lệ
+      // Set thông tin authentication vào Security Context
+      SecurityContextHolder.getContext().setAuthentication(authentication);
+      // Trả về jwt cho người dùng.
+      String jwt = tokenProvider.generateToken((User) authentication.getPrincipal());
+      return new LoginResponse(jwt);
+    }catch (Exception e){
+      throw new NotFoundException(ConstantError.LOGIN_ERROR);
+    }
+
+
   }
 
 }

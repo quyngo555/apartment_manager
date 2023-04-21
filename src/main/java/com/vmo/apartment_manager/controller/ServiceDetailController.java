@@ -5,6 +5,7 @@ import com.vmo.apartment_manager.service.ServiceFeeService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -27,6 +28,14 @@ public class ServiceDetailController {
   @PutMapping("/{id}")
   public ResponseEntity<?> updateBill(@PathVariable("id") long id, @RequestBody ServiceFee serviceFee){
     return ResponseEntity.ok(service.update(id, serviceFee));
+  }
+  @GetMapping("/{id}")
+  public ResponseEntity<?> findById(@PathVariable("id") long id){
+    return ResponseEntity.ok(service.findById(id));
+  }
+  @GetMapping("")
+  public ResponseEntity<?> getAll(){
+    return ResponseEntity.ok(service.getAll());
   }
 
 }

@@ -12,6 +12,7 @@ public class ConstantError {
   public static final String CONTRACT_EXISTS = "Apartment is already in use, cannot add new contract";
   public static final String CONTRACT_NOT_EXISTS_IN_APARTMENT = "Contract is not exists in Apartment : ";
   public static final String FILE_IMPORT_ERROR = "File import error at: ";
+  public static final String LOGIN_ERROR = "Username or password is not correct";
 
 
 }

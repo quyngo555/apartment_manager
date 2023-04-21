@@ -138,9 +138,12 @@ public class PersonServiceImpl implements PersonService {
     List<Person> personList = personRepo.findRepresentWithPagination(paging);
     List<PersonResponse> personResponses = new ArrayList<>();
     for(Person person: personList){
-      Optional<Apartment> apartment = apartmentRepo.findApartmentByContractId(person.getId());
-      if(apartment.isEmpty() == false)
-      personResponses.add(new PersonResponse(person, apartment.get().getCode()));
+      List<Contract> contracts = contractRepo.findByRepresent(person.getId());
+      for(Contract contract: contracts){
+        Optional<Apartment> apartment = apartmentRepo.findApartmentByContractId(contract.getId());
+        if(apartment.isEmpty() == false)
+          personResponses.add(new PersonResponse(person, apartment.get().getCode()));
+      }
     }
     return personResponses;
   }

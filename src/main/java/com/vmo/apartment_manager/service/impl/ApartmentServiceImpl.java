@@ -103,7 +103,7 @@ public class ApartmentServiceImpl implements ApartmentService {
 
     List<Apartment> apartments = new ArrayList<>();
     for (Person p : representList) {
-      apartments.add(apartmentRepo.findByRepresentId(p.getId()));
+      apartments.addAll(apartmentRepo.findByRepresentId(p.getId()));
     }
     List<ApartmentResponse> apartmentResponses = new ArrayList<>();
     for (Apartment apartment : apartments) {

@@ -17,6 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Entity
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+
 public class Apartment {
 
   @Id

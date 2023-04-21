@@ -14,6 +14,7 @@ import com.vmo.apartment_manager.repository.PersonRepository;
 import com.vmo.apartment_manager.service.ContractService;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -51,6 +52,9 @@ public class ContractServiceImpl implements ContractService {
     Person person = personRepo.findById(contractRequest.getPerson().getId()).orElseThrow(() -> {
       throw new NotFoundException(ConstantError.PERSON_NOT_FOUND + contractRequest.getPerson().getId());
     });
+    if(person.getPhone() == null || person.getEmail() == null){
+      throw new NotFoundException(ConstantError.LACK_OF_EMAIL_PHONE);
+    }
     contract.setPriceApartment(contractRequest.getPriceApartment());
     contract.setStartDate(contractRequest.getStartDate());
     contract.setEndDate(contractRequest.getEndDate());
@@ -128,10 +132,10 @@ public class ContractServiceImpl implements ContractService {
   @Transactional(rollbackFor = {Exception.class, Throwable.class})
   public String changeAllStatusByIds(long[] ids) {
     for(long id: ids){
-      Contract contract = contractRepo.findByRepresent(id);
-      if(contract != null){
-        contract.setStatus(ContractStatus.TERMINATE);
-        personRepo.findPersonByContractId(contract.getId()).stream()
+      Optional<Contract> contract = contractRepo.findById(id);
+      if(contract.isEmpty() == false){
+        contract.get().setStatus(ContractStatus.TERMINATE);
+        personRepo.findPersonByContractId(contract.get().getId()).stream()
             .forEach(person -> person.setStatus(false));
       }
 

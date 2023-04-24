@@ -63,7 +63,10 @@ public class PersonController {
     return ResponseEntity.ok(personService.findPersonsByApartmentCode(apartmentCode));
   }
 
-
+@GetMapping("/persons/{id}")
+  public ResponseEntity<?> findPersonById(@PathVariable("id") long id){
+    return ResponseEntity.ok(personService.findById(id));
+}
 
 
 }

@@ -1,6 +1,8 @@
 package com.vmo.apartment_manager.service.impl;
 
+import com.vmo.apartment_manager.constant.ConstantError;
 import com.vmo.apartment_manager.entity.User;
+import com.vmo.apartment_manager.exception.NotFoundException;
 import com.vmo.apartment_manager.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,7 +20,9 @@ public class UserService implements UserDetailsService {
   @Override
   public UserDetails loadUserByUsername(String username) {
     // Kiểm tra xem user có tồn tại trong database không?
-    User user = userRepository.findByUsername(username);
+    User user = userRepository.findByUsername(username).orElseThrow(() -> {
+      throw new NotFoundException(ConstantError.USER_NOT_FOUND + username);
+    });
     if (user == null) {
       throw new UsernameNotFoundException("User not found with id : " + username);
     }

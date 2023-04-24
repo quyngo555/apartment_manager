@@ -65,7 +65,9 @@ public class BillServiceImpl implements BillService {
   public Bill add(BillRequest bill) {
     Bill bill1 = new Bill();
     bill1.setTermPayment(bill.getTermPayment());
-    Contract contract = contractRepo.findContractByApartmentId(bill.getApartmentId()).get();
+    Contract contract = contractRepo.findContractByApartmentId(bill.getApartmentId()).orElseThrow(() ->{
+      throw new NotFoundException(ConstantError.CONTRACT_NOT_FOUND + "in apartmentId: " + bill.getApartmentId());
+    });
     billRepo.save(bill1);
     bill1.setBillDetailList(bill.getBillDetailList());
     bill1.setContract(contract);
@@ -158,7 +160,9 @@ public class BillServiceImpl implements BillService {
               String apartmentCode = currentCell.getStringCellValue();
               if(apartmentCode == null)
                 throw new NotFoundException(ConstantError.APARTMENT_NOT_FOUND + apartmentCode);
-              Contract contract = contractRepo.findContractByApartmentCode(apartmentCode);
+              Contract contract = contractRepo.findContractByApartmentCode(apartmentCode).orElseThrow(()->{
+                throw new NotFoundException(ConstantError.CONTRACT_NOT_FOUND);
+              });
               if(contract == null){
                 throw new NotFoundException(ConstantError.CONTRACT_NOT_EXISTS_IN_APARTMENT + apartmentCode);
               }

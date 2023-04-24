@@ -3,11 +3,17 @@ package com.vmo.apartment_manager.payload.request;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import java.sql.Date;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class PersonRequest {
   private String fullName;
 
@@ -28,4 +34,6 @@ public class PersonRequest {
   private Long apartmentId;
 
   private Boolean status;
+
+
 }

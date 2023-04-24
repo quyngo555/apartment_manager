@@ -33,5 +33,5 @@ public interface ContractRepository extends JpaRepository<Contract, Long> {
 
   @Query(value = "select c from Contract c "
       + "inner join Apartment a on c.apartment.id = a.id where a.code = ?1")
-  Contract findContractByApartmentCode(String apartmentCode);
+  Optional<Contract> findContractByApartmentCode(String apartmentCode);
 }

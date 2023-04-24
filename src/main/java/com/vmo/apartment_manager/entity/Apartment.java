@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Apartment {
 
   @Id

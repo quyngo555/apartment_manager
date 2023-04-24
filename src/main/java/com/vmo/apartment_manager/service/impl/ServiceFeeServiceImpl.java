@@ -1,6 +1,9 @@
 package com.vmo.apartment_manager.service.impl;
 
+import com.vmo.apartment_manager.constant.ConstantError;
 import com.vmo.apartment_manager.entity.ServiceFee;
+import com.vmo.apartment_manager.exception.NotFoundException;
+import com.vmo.apartment_manager.payload.response.ServiceFeeResponse;
 import com.vmo.apartment_manager.repository.ServiceFeeRepository;
 import com.vmo.apartment_manager.service.ServiceFeeService;
 import java.util.List;
@@ -14,16 +17,17 @@ public class ServiceFeeServiceImpl implements ServiceFeeService {
   ServiceFeeRepository serviceFeeRepo;
 
   @Override
-  public ServiceFee add(ServiceFee serviceFee) {
-    return serviceFeeRepo.save(serviceFee);
+  public ServiceFeeResponse add(ServiceFee serviceFee) {
+    return new ServiceFeeResponse(serviceFeeRepo.save(serviceFee));
   }
 
   @Override
-  public ServiceFee update(long id, ServiceFee serviceFee) {
-    Optional<ServiceFee> serviceFee1 = serviceFeeRepo.findById(id);
-    if(serviceFee1.isPresent())
-      serviceFee1.get().setPrice(serviceFee.getPrice());
-    return serviceFeeRepo.save(serviceFee1.get());
+  public ServiceFeeResponse update(long id, ServiceFee serviceFee) {
+    ServiceFee serviceFeeOld = serviceFeeRepo.findById(id).orElseThrow(() -> {
+      throw new NotFoundException(ConstantError.SERVICE_NOT_EXISTS + id);
+    });
+    serviceFee.setId(id);
+    return  new ServiceFeeResponse(serviceFeeRepo.save(serviceFee));
   }
 
   @Override
@@ -32,13 +36,19 @@ public class ServiceFeeServiceImpl implements ServiceFeeService {
   }
 
   @Override
-  public Optional<ServiceFee> findById(long id) {
-    return serviceFeeRepo.findById(id);
+  public ServiceFeeResponse findById(long id) {
+    ServiceFee serviceFee = serviceFeeRepo.findById(id).orElseThrow(() ->{
+      throw new NotFoundException(ConstantError.SERVICE_NOT_EXISTS + id);
+    });
+    return new ServiceFeeResponse(serviceFee);
   }
 
   @Override
   public void deleteById(long id) {
-    serviceFeeRepo.deleteById(id);
+    ServiceFee serviceFee = serviceFeeRepo.findById(id).orElseThrow(() ->{
+      throw new NotFoundException(ConstantError.SERVICE_NOT_EXISTS  + id);
+    });
+    serviceFeeRepo.delete(serviceFee);
   }
 
 }

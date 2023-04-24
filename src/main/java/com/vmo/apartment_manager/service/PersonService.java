@@ -10,11 +10,9 @@ public interface PersonService {
   PersonResponse add(PersonRequest person);
   PersonResponse update(Long id, Person person);
   List<PersonResponse> getPersonsActiveByApartmentId(long id);
-  String deletePersonById(Long id);
   String deletePersonsById(long[] ids);
   List<PersonResponse> getPersonByName(String namePerson);
   List<PersonResponse> getRepresent(Integer pageNo, Integer pageSize, String sortBy);
-  List<PersonResponse> getPersonsByRepresent(long representId);
   List<Person> findAll();
-  List<Person> findPersonActive(long apartmentId);
+  List<Person> findPersonsByApartmentCode(String apartmentCode);
 }

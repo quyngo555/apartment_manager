@@ -1,6 +1,7 @@
 package com.vmo.apartment_manager.controller;
 
 import com.vmo.apartment_manager.entity.BillDetail;
+import com.vmo.apartment_manager.payload.response.BillDetailResponse;
 import com.vmo.apartment_manager.service.BillDetailService;
 import com.vmo.apartment_manager.service.BillService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -25,15 +26,14 @@ public class BillDetailController {
 
   @PostMapping("/bill-details")
   public ResponseEntity<?> add(@RequestBody BillDetail billDetail) {
-    BillDetail billDetail1 = billDetailService.add(billDetail);
-    billService.update(billDetail1.getBill().getId(), billDetail1.getBill());
+    BillDetailResponse billDetail1 = billDetailService.add(billDetail);
+
     return ResponseEntity.ok(billDetail1);
   }
 
   @PutMapping("/bill-details/{id}")
   public ResponseEntity<?> update(@PathVariable("id") long id, @RequestBody BillDetail billDetail) {
-    BillDetail billDetail1 = billDetailService.add(billDetail);
-    billService.update(billDetail1.getBill().getId(), billDetail1.getBill());
+    BillDetailResponse billDetail1 = billDetailService.add(billDetail);
     return ResponseEntity.ok(billDetail1);
   }
 

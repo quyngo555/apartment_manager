@@ -44,10 +44,7 @@ public class EmailServiceImpl implements EmailService {
     return "Send successfully";
   }
 
-  @Override
-  public void sendContractWarning() {
 
-  }
 
   public String getContent(Bill bill){
     Date date = new Date();

@@ -36,10 +36,6 @@ public class PersonController {
   public ResponseEntity<?> update(@PathVariable("id") long id, @RequestBody Person person){
     return ResponseEntity.ok(personService.update(id, person));
   }
-  @PutMapping("persons/{id}/change-status")
-  public ResponseEntity<?> changeStatus(@PathVariable("id")long id){
-    return ResponseEntity.ok(personService.deletePersonById(id));
-  }
   @PutMapping("/persons/change-status")
   public ResponseEntity<?> changeAllStatus(@RequestBody long []ids){
     return ResponseEntity.ok(personService.deletePersonsById(ids));
@@ -62,15 +58,12 @@ public class PersonController {
     return ResponseEntity.ok(personService.getRepresent(pageNo, pageSize, sortBy));
   }
 
-  @GetMapping("/represent/{id}/persons")
-  public ResponseEntity<?> getPersonsByRepresent(@PathVariable("id") long id){
-    return ResponseEntity.ok(personService.getPersonsByRepresent(id));
+  @GetMapping("/apartment/persons")
+  public ResponseEntity<?> getPersonByApartmentCode(@RequestParam String apartmentCode){
+    return ResponseEntity.ok(personService.findPersonsByApartmentCode(apartmentCode));
   }
 
-  @GetMapping("/apartments/{id}/person-active")
-  public ResponseEntity<?> getPersonActiveInApartment(@PathVariable("id") long id){
-    return ResponseEntity.ok(personService.findPersonActive(id));
-  }
+
 
 
 }

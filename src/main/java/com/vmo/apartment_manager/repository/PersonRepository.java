@@ -26,7 +26,7 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
 
   @Query(value = "select p from Person p "
       + "where p.fullName like %?1% and p.status = true")
-  List<Person> getPersonByName(String namePerson);
+  List<Person> findPersonByName(String namePerson);
 
   @Query(value = "select p from Person p "
       + "inner join Contract c on p.id = c.person.id "

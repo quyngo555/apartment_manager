@@ -5,5 +5,4 @@ import com.vmo.apartment_manager.entity.BillDetail;
 
 public interface EmailService {
   String sendBill(Bill bill);
-  void sendContractWarning();
 }

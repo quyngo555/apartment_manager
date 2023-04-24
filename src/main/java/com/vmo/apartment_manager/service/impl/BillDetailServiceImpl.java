@@ -5,12 +5,14 @@ import com.vmo.apartment_manager.entity.Bill;
 import com.vmo.apartment_manager.entity.BillDetail;
 import com.vmo.apartment_manager.entity.ServiceFee;
 import com.vmo.apartment_manager.exception.NotFoundException;
+import com.vmo.apartment_manager.payload.response.BillDetailResponse;
 import com.vmo.apartment_manager.repository.BillDetailRepository;
 import com.vmo.apartment_manager.repository.BillRepository;
 import com.vmo.apartment_manager.repository.ServiceFeeRepository;
 import com.vmo.apartment_manager.service.BillDetailService;
 import com.vmo.apartment_manager.service.BillService;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,35 +25,57 @@ public class BillDetailServiceImpl implements BillDetailService {
   @Autowired
   ServiceFeeRepository serviceFeeRepo;
 
-
-
+  @Autowired
+  BillRepository billRepo;
   @Override
-  public BillDetail add(BillDetail billDetail) {
-    ServiceFee serviceFee = serviceFeeRepo.findById(billDetail.getServiceFee().getId()).get();
+  public BillDetailResponse add(BillDetail billDetail) {
+    ServiceFee serviceFee = serviceFeeRepo.findById(billDetail.getServiceFee().getId()).orElseThrow(() ->{
+      throw new NotFoundException(ConstantError.SERVICE_NOT_EXISTS + billDetail.getServiceFee().getId());
+    });
+    Bill bill = billRepo.findById(billDetail.getBill().getId()).orElseThrow(() -> {
+      throw new NotFoundException(ConstantError.BILL_NOT_FOUND + billDetail.getBill().getId());
+    });
     billDetail.setSubTotal(billDetail.getConsume() * serviceFee.getPrice());
-    BillDetail billDetail1 =  billDetailRepo.save(billDetail);
-    return billDetail1;
+    billDetail.setServiceFee(serviceFee);
+    billDetail.setBill(bill);
+    billDetailRepo.save(billDetail);
+    bill.setTotal(bill.getTotal() + billDetail.getSubTotal());
+    billRepo.save(bill);
+    return new BillDetailResponse(billDetail);
   }
 
   @Override
-  public BillDetail update(long id, BillDetail billDetail) {
+  public BillDetailResponse update(long id, BillDetail billDetail) {
     BillDetail billDetail1 = billDetailRepo.findById(id).orElseThrow(() -> {
       throw new NotFoundException(ConstantError.BILL_NOT_FOUND + id);
     });
-    billDetail1.setConsume(billDetail.getConsume());
-    billDetail1.setSubTotal(billDetail.getConsume() * billDetail.getServiceFee().getPrice());
-    billDetail1 =  billDetailRepo.save(billDetail1);
-    return billDetail1;
+    billDetail.setId(id);
+    billDetail.setSubTotal(billDetail.getConsume() * billDetail.getServiceFee().getPrice());
+    Bill bill = billRepo.findById(billDetail1.getBill().getId()).orElseThrow(() -> {
+      throw new NotFoundException(ConstantError.BILL_NOT_FOUND + billDetail.getBill().getId());
+    });
+    billDetailRepo.save(billDetail);
+
+    bill.setTotal(bill.getTotal() + billDetail1.getSubTotal());
+    billRepo.save(bill);
+    return new BillDetailResponse(billDetail);
+  }
+
+
+
+  @Override
+  public BillDetailResponse findById(long id) {
+    BillDetail billDetail = billDetailRepo.findById(id).orElseThrow(() -> {
+      throw new NotFoundException(ConstantError.BILL_DETAIL_NOT_FOUND + id);
+    });
+    return new BillDetailResponse(billDetail);
   }
 
   @Override
-  public BillDetail findById(long id) {
-    return billDetailRepo.findById(id).get();
-  }
-
-  @Override
-  public List<BillDetail> getAll() {
-    return billDetailRepo.findAll();
+  public List<BillDetailResponse> getAll() {
+    return billDetailRepo.findAll().stream()
+        .map(BillDetailResponse::new)
+        .toList();
   }
 
 

@@ -15,4 +15,5 @@ public interface PersonService {
   List<PersonResponse> getRepresent(Integer pageNo, Integer pageSize, String sortBy);
   List<Person> findAll();
   List<Person> findPersonsByApartmentCode(String apartmentCode);
+  Person findById(long id);
 }

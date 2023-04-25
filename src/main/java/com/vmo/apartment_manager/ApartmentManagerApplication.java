@@ -18,10 +18,10 @@ public class ApartmentManagerApplication implements CommandLineRunner{
 
 //  @Autowired
 //  public PasswordEncoder passwordEncoder;
-//  @Autowired
-//  private UserRepository userRepository;
-//  @Autowired
-//  ApartmentRepository apartmentRepo;
+  @Autowired
+  private UserRepository userRepository;
+  @Autowired
+  ApartmentRepository apartmentRepo;
 
 
   public static void main(String[] args) {
@@ -31,8 +31,8 @@ public class ApartmentManagerApplication implements CommandLineRunner{
   public void run(String... args) throws Exception {
 
 //    User user = new User();
-//    user.setUsername("admin");
-//    user.setPassword(passwordEncoder.encode("admin"));
+//    user.setUsername("123456789123");
+//    user.setPassword(passwordEncoder.encode("12345678"));
 //    userRepository.save(user);
 //
 //    for(int i = 1; i <= 10; i++){

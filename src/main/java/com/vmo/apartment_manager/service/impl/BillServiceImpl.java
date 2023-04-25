@@ -68,10 +68,10 @@ public class BillServiceImpl implements BillService {
     Contract contract = contractRepo.findContractByApartmentId(bill.getApartmentId()).orElseThrow(() ->{
       throw new NotFoundException(ConstantError.CONTRACT_NOT_FOUND + "in apartmentId: " + bill.getApartmentId());
     });
-    billRepo.save(bill1);
-    bill1.setBillDetailList(bill.getBillDetailList());
     bill1.setContract(contract);
     bill1.setNote(bill.getNote());
+    billRepo.save(bill1);
+    bill1.setBillDetailList(bill.getBillDetailList());
     List<BillDetail> billDetails = new ArrayList<>();
     List<Long> serviceFeeIds = new ArrayList<>();
     double total = 0;
@@ -81,7 +81,9 @@ public class BillServiceImpl implements BillService {
             ConstantError.SERVICE_EXISTS + billDetail.getServiceFee().getId());
       }
       serviceFeeIds.add(billDetail.getServiceFee().getId());
-      ServiceFee serviceFee = serviceFeeRepo.findById(billDetail.getServiceFee().getId()).get();
+      ServiceFee serviceFee = serviceFeeRepo.findById(billDetail.getServiceFee().getId()).orElseThrow(() -> {
+        throw new NotFoundException(ConstantError.SERVICE_NOT_EXISTS + billDetail.getServiceFee().getId());
+      });
       billDetail.setSubTotal(serviceFee.getPrice() * billDetail.getConsume());
       billDetail.setConsume(billDetail.getConsume());
       billDetail.setBill(bill1);
@@ -98,16 +100,17 @@ public class BillServiceImpl implements BillService {
 
   @Override
   public Bill update(long id, Bill bill) {
-    Bill bill1 = billRepo.findById(bill.getId()).get();
+    Bill bill1 = billRepo.findById(id).orElseThrow(() -> {
+      throw new NotFoundException(ConstantError.BILL_NOT_FOUND + id);
+    });
     List<BillDetail> billDetailList = bill1.getBillDetailList();
     Double total = 0.0;
     for (BillDetail billDetail : billDetailList) {
       total += billDetail.getSubTotal();
     }
-    bill1.setPaidDate(bill.getPaidDate());
-    bill1.setStauts(bill.getStauts());
-    bill1.setTotal(total);
-    return billRepo.save(bill1);
+    bill.setId(id);
+    bill.setTotal(total);
+    return billRepo.save(bill);
   }
 
   @Override

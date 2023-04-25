@@ -10,7 +10,7 @@ public class ApartmentResponse {
   private Long id;
   private String roomMaster;
   private String contractCode;
-  private ContractStatus status;
+  private Boolean status;
   private int personInApartment;
   private String apartmentCode;
   private Double area;

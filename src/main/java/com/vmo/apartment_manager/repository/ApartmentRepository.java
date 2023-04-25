@@ -20,7 +20,7 @@ public interface ApartmentRepository extends JpaRepository<Apartment, Long> {
       + "where c.person.id = ?1 and c.status = com.vmo.apartment_manager.entity.ContractStatus.ACTIVE")
   List<Apartment> findByRepresentId(long personId);
 
-  @Query(value = "select count(a) from Apartment a where a.status = true ")
+  @Query(value = "select count(a) from Apartment a where a.status = true")
   int countApartmentInUse();
 
   @Query(value = "select a from Apartment a "

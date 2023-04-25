@@ -21,22 +21,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/service-fee")
 @SecurityRequirement(name = "Authorization")
-public class ServiceDetailController {
+public class ServiceFeeController {
 
   @Autowired
   ServiceFeeService service;
 
   @PostMapping("")
-  public ResponseEntity<?> addBill(@Valid @RequestBody ServiceFee serviceFee, BindingResult result){
-    if(result.hasErrors()){
-      Map<String, String> errors = new HashMap<>();
-      result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
-      return ResponseEntity.badRequest().body(errors);
-    }
+  public ResponseEntity<?> add(@Valid @RequestBody ServiceFee serviceFee){
     return ResponseEntity.ok(service.add(serviceFee));
   }
   @PutMapping("/{id}")
-  public ResponseEntity<?> updateBill(@PathVariable("id") long id,@RequestBody ServiceFee serviceFee){
+  public ResponseEntity<?> update(@PathVariable("id") long id,@RequestBody ServiceFee serviceFee){
     return ResponseEntity.ok(service.update(id, serviceFee));
   }
   @GetMapping("/{id}")

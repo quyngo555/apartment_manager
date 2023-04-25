@@ -29,7 +29,7 @@ public class ContractController {
   public ResponseEntity<?> getAll(@RequestParam(defaultValue = "1") Integer pageNo,
       @RequestParam(defaultValue = "10") Integer pageSize,
       @RequestParam(defaultValue = "id") String sortBy) {
-    return ResponseEntity.ok(contractService.getAll(pageNo, pageSize, sortBy));
+    return ResponseEntity.ok(contractService.getAllContractActive(pageNo, pageSize, sortBy));
   }
 
   @GetMapping("/contracts/{id}")

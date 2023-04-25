@@ -1,7 +1,10 @@
 package com.vmo.apartment_manager.service.impl;
 
+import com.vmo.apartment_manager.constant.ConstantError;
 import com.vmo.apartment_manager.entity.Bill;
+import com.vmo.apartment_manager.entity.Person;
 import com.vmo.apartment_manager.entity.BillDetail;
+import com.vmo.apartment_manager.exception.NotFoundException;
 import com.vmo.apartment_manager.repository.BillRepository;
 import com.vmo.apartment_manager.repository.PersonRepository;
 import com.vmo.apartment_manager.service.EmailService;
@@ -27,8 +30,13 @@ public class EmailServiceImpl implements EmailService {
   @Override
   public String sendBill(Bill bill1) {
     try{
-      Bill bill = billRepository.findById(1l).get();
-      String recipient = personRepo.findRepresentByContractId(bill.getId()).getEmail();
+      Bill bill = billRepository.findById(bill1.getId()).orElseThrow(() -> {
+        throw new NotFoundException(ConstantError.BILL_NOT_FOUND +bill1.getId());
+      });
+      Person person = personRepo.findRepresentByContractId(bill.getContract().getId()).orElseThrow(() -> {
+        throw new NotFoundException(ConstantError.PERSON_NOT_FOUND);
+      });
+      String recipient = person.getEmail();
       String content = getContent(bill);
       String subject = "Hóa đơn phí dịch vụ phòng " + bill.getContract().getApartment().getName();
 

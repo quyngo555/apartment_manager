@@ -11,7 +11,7 @@ public interface ContractService {
   ContractResponse add(ContractRequest contract) throws Exception;
   Contract update(Long id, Contract contract);
   Contract findById(Long id);
-  List<Contract> getAll(Integer pageNo, Integer pageSize, String sortBy);
+  List<Contract> getAllContractActive(Integer pageNo, Integer pageSize, String sortBy);
   Contract changeRepersent(long id, long newPresent);
   String changeAllStatusByIds(long[] ids);
   List<Contract> findContractByCreatedBetween(Date startDate, Date endDate);

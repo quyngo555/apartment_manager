@@ -3,7 +3,7 @@ package com.vmo.apartment_manager.constant;
 public class ConstantError {
   public static final String APARTMENT_NOT_FOUND = "does not exist apartment : ";
 
-  public static final String PERSON_NOT_FOUND = "does not exist resident with id: ";
+  public static final String PERSON_NOT_FOUND = "does not exist person";
   public static final String LACK_OF_EMAIL_PHONE = "lack of field email and phone";
   public static final String SERVICE_EXISTS = "Can't add 2 same services in 1 bill";
   public static final String BILL_NOT_FOUND = "does not exist bill with id: ";

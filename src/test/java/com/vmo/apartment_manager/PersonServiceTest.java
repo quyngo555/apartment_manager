@@ -32,10 +32,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.core.parameters.P;
 
 @ExtendWith(MockitoExtension.class)
 public class PersonServiceTest {
@@ -240,5 +236,38 @@ public class PersonServiceTest {
 
   }
 
+  @Test
+  void testGetPersonByApartmentCode(){
+    String apartmentCode = "CT01";
+    when(contractRepo.findContractByApartmentCode(apartmentCode)).thenReturn(Optional.of(contract));
+    when(personRepo.findPersonByContractId(1l)).thenReturn(personList);
+    List<Person> persons = personService.findPersonsByApartmentCode(apartmentCode);
+    Assertions.assertNotNull(persons);
+    assertEquals(personList.size(), 2);
+  }
 
+  @Test
+  void testGetPersonByApartmentCodeNotFoundContract(){
+    String apartmentCode = "CT01";
+    when(contractRepo.findContractByApartmentCode(apartmentCode)).thenReturn(Optional.empty());
+    NotFoundException exception = assertThrows(NotFoundException.class,
+        () -> personService.findPersonsByApartmentCode(apartmentCode));
+    assertEquals(ConstantError.CONTRACT_NOT_FOUND , exception.getMessage());
+  }
+
+  @Test
+  void testFindById(){
+    when(personRepo.findById(1l)).thenReturn(Optional.of(personList.get(0)));
+    Person person1 = personService.findById(1l);
+    assertEquals(person1, personList.get(0));
+  }
+
+  @Test
+  void testFindByIdNotFound(){
+    Long personId = 1l;
+    when(personRepo.findById(personId)).thenReturn(Optional.empty());
+    NotFoundException exception = assertThrows(NotFoundException.class,
+        () -> personService.findById(personId));
+    assertEquals(ConstantError.PERSON_NOT_FOUND + personId , exception.getMessage());
+  }
 }

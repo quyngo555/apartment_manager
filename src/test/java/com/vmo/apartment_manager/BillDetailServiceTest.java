@@ -14,7 +14,6 @@ import com.vmo.apartment_manager.entity.ServiceFee;
 import com.vmo.apartment_manager.entity.TypeService;
 import com.vmo.apartment_manager.exception.NotFoundException;
 import com.vmo.apartment_manager.payload.response.BillDetailResponse;
-import com.vmo.apartment_manager.payload.response.ServiceFeeResponse;
 import com.vmo.apartment_manager.repository.BillDetailRepository;
 import com.vmo.apartment_manager.repository.BillRepository;
 import com.vmo.apartment_manager.repository.ServiceFeeRepository;
@@ -33,7 +32,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)

@@ -55,6 +55,7 @@ public class ContractServiceImpl implements ContractService {
     if(person.getPhone() == null || person.getEmail() == null){
       throw new NotFoundException(ConstantError.LACK_OF_EMAIL_PHONE);
     }
+
     contract.setPriceApartment(contractRequest.getPriceApartment());
     contract.setStartDate(contractRequest.getStartDate());
     contract.setEndDate(contractRequest.getEndDate());
@@ -97,9 +98,9 @@ public class ContractServiceImpl implements ContractService {
   }
 
   @Override
-  public List<Contract> getAll(Integer pageNo, Integer pageSize, String sortBy) {
+  public List<Contract> getAllContractActive(Integer pageNo, Integer pageSize, String sortBy) {
     Pageable paging = PageRequest.of(pageNo-1, pageSize, Sort.by(sortBy));
-    return contractRepo.findAll(paging).getContent();
+    return contractRepo.findContractActiveWithPagination(paging);
   }
 
   @Override
@@ -108,7 +109,9 @@ public class ContractServiceImpl implements ContractService {
       throw new NotFoundException(ConstantError.CONTRACT_NOT_FOUND + id);
     });
     contractOld.setStatus(ContractStatus.TERMINATE);
-    Person representOld = personRepo.findRepresentByContractId(contractOld.getId());
+    Person representOld = personRepo.findRepresentByContractId(contractOld.getId()).orElseThrow(() -> {
+      throw new NotFoundException(ConstantError.PERSON_NOT_FOUND);
+    });
     representOld.setStatus(false);
     contractRepo.save(contractOld);
     Apartment apartment = apartmentRepo.findApartmentByContractId(contractOld.getId()).get();

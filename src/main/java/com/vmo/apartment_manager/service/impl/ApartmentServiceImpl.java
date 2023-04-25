@@ -44,13 +44,14 @@ public class ApartmentServiceImpl implements ApartmentService {
       dto.setArea(apartment.getArea());
       if (contract.isEmpty() == false) {
         dto.setContractCode(contract.get().getCode());
-        dto.setStatus(contract.get().getStatus());
+
         person = contract.get().getPerson();
         dto.setPersonInApartment(personRepo.countPersonByContractId(contract.get().getId()));
       }
       if(person != null)
         dto.setRoomMaster(person.getFullName());
       dto.setId(apartment.getId());
+      dto.setStatus(apartment.getStatus());
       dto.setApartmentCode(apartment.getCode());
 
       apartmentResponses.add(dto);
@@ -85,10 +86,10 @@ public class ApartmentServiceImpl implements ApartmentService {
       Optional<Contract> contract = contractRepo.findContractByApartmentId(apartment.getId());
 
       if(contract.isEmpty() == false){
-        dto.setStatus(contract.get().getStatus());
         dto.setRoomMaster(contract.get().getPerson().getFullName());
         dto.setPersonInApartment(personRepo.countPersonByContractId(contract.get().getId()));
       }
+      dto.setStatus(apartment.getStatus());
       dto.setId(apartment.getId());
 
       dto.setContractCode(apartment.getCode());
@@ -111,11 +112,12 @@ public class ApartmentServiceImpl implements ApartmentService {
 
       ApartmentResponse dto = new ApartmentResponse();
       if (contract.isEmpty() == false) {
-        dto.setStatus(contract.get().getStatus());
+
         dto.setContractCode(contract.get().getCode());
         dto.setRoomMaster(contract.get().getPerson().getFullName());
         dto.setPersonInApartment(personRepo.countPersonByContractId(contract.get().getId()));
       }
+      dto.setStatus(apartment.getStatus());
       dto.setId(apartment.getId());
 
       dto.setApartmentCode(apartment.getCode());

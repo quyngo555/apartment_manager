@@ -52,7 +52,7 @@ public class SecurityConfig {
         .csrf().disable()
         //config quyền truy cập api
         .authorizeRequests()
-        .requestMatchers("/auth/login", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+        .requestMatchers("/api/login", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
         .anyRequest().authenticated()
         .and()
         .exceptionHandling()

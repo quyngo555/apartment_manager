@@ -153,14 +153,9 @@ public class PersonServiceImpl implements PersonService {
     Contract contract = contractRepo.findContractByApartmentCode(apartmentCode).orElseThrow(() ->{
       throw new NotFoundException(ConstantError.CONTRACT_NOT_FOUND);
     });
-    List<PersonResponse> personResponses = new ArrayList<>();
-    personResponses.addAll(personRepo.findPersonByContractId(contract.getId()).stream()
+    return personRepo.findPersonByContractId(contract.getId()).stream()
             .map(PersonResponse::new)
-            .toList());
-
-    PersonResponse represent= new PersonResponse(contract.getPerson());
-    personResponses.add(represent);
-    return personResponses;
+            .toList();
   }
 
   @Override

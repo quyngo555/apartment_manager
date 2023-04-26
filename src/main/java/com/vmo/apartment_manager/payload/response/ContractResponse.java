@@ -11,6 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ContractResponse {
+  private long id;
   private double priceApartment;
   private Date startDate;
   private String createdBy;
@@ -22,6 +23,7 @@ public class ContractResponse {
   private PersonResponse person;
 
   public ContractResponse(Contract contract) {
+    this.id = contract.getId();
     this.priceApartment = contract.getPriceApartment();
     this.startDate = contract.getStartDate();
     this.endDate = contract.getEndDate();

@@ -48,7 +48,7 @@ public class ContractController {
   }
 
   @PutMapping("/contracts/{id}/change-represent")
-  public ResponseEntity<?> changeStatus(@PathVariable("id") long id,
+  public ResponseEntity<?> changeRepresent(@PathVariable("id") long id,
       @RequestParam long representIdNew) {
     return ResponseEntity.ok(contractService.changeRepersent(id, representIdNew));
   }

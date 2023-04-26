@@ -58,7 +58,7 @@ public class PersonController {
     return ResponseEntity.ok(personService.getRepresent(pageNo, pageSize, sortBy));
   }
 
-  @GetMapping("/represents/{id}/list-member")
+  @GetMapping("/represents/list-member")
   public ResponseEntity<?> getPersonByRepresent(@RequestParam String apartmentCode){
     return ResponseEntity.ok(personService.findPersonsByRepresent(apartmentCode));
   }

@@ -114,7 +114,7 @@ public class ContractServiceImpl implements ContractService {
     Contract contractOld = contractRepo.findById(id).orElseThrow(() -> {
       throw new NotFoundException(ConstantError.CONTRACT_NOT_FOUND + id);
     });
-    contractOld.setStatus(ContractStatus.TERMINATE);
+    contractOld.setStatus(ContractStatus.EXPIRED);
     Person representOld = personRepo.findRepresentByContractId(contractOld.getId())
         .orElseThrow(() -> {
           throw new NotFoundException(ConstantError.PERSON_NOT_FOUND);
@@ -152,6 +152,8 @@ public class ContractServiceImpl implements ContractService {
         throw new NotFoundException(ConstantError.CONTRACT_NOT_FOUND);
       });
       contract.setStatus(ContractStatus.TERMINATE);
+      contract.getApartment().setStatus(false);
+      apartmentRepo.save(contract.getApartment());
       personRepo.findPersonByContractId(contract.getId()).stream()
           .forEach(person -> person.setStatus(false));
     }

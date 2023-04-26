@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -41,9 +43,6 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
 
   @Query(value = "select count(p) from Person p where p.contractId = ?1 and p.status = true")
   int countPersonByContractId(long contractId);
-
-  @Query(value = "select p from Person p where p.contractId = ?1")
-  List<Person> findPersonsByRepresentId(long representId);
 
   @Query(value = "select p from Person p "
       + "inner join Contract c on p.contractId = c.id where c.id = ?1")

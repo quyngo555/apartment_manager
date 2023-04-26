@@ -3,6 +3,8 @@ package com.vmo.apartment_manager.service;
 import com.vmo.apartment_manager.payload.request.PersonRequest;
 import com.vmo.apartment_manager.payload.response.PersonResponse;
 import com.vmo.apartment_manager.entity.Person;
+import org.springframework.data.domain.Page;
+
 import java.util.Date;
 import java.util.List;
 

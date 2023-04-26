@@ -16,8 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @SpringBootApplication
 public class ApartmentManagerApplication implements CommandLineRunner{
 
-//  @Autowired
-//  public PasswordEncoder passwordEncoder;
+  @Autowired
+  public PasswordEncoder passwordEncoder;
   @Autowired
   private UserRepository userRepository;
   @Autowired

@@ -33,6 +33,7 @@ public interface ContractRepository extends JpaRepository<Contract, Long> {
   @Query(value = "select c from Contract c where c.status = com.vmo.apartment_manager.entity.ContractStatus.ACTIVE")
   List<Contract> findContractActiveWithPagination(Pageable pageable);
 
+  @Query(value = "select c from Contract c where c.createdDate between ?1 and ?2")
   List<Contract> findByCreatedDateBetweenDatesWithPagination(Date startDate, Date endDate, Pageable pageable);
 
   @Query(value = "select c from Contract c "

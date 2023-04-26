@@ -64,7 +64,6 @@ public class BillServiceImpl implements BillService {
   @Transactional(rollbackFor = {Exception.class, Throwable.class})
   public Bill add(BillRequest bill) {
     Bill bill1 = new Bill();
-    bill1.setTermPayment(bill.getTermPayment());
     Contract contract = contractRepo.findContractByApartmentId(bill.getApartmentId()).orElseThrow(() ->{
       throw new NotFoundException(ConstantError.CONTRACT_NOT_FOUND + "in apartmentId: " + bill.getApartmentId());
     });

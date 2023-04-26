@@ -12,7 +12,6 @@ public class BillRequest {
 
   private Date paidDate;
   private String note;
-  private Date termPayment;
   private Long apartmentId;
   List<BillDetail> billDetailList;
 }

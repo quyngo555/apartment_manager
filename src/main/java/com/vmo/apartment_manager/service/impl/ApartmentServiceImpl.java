@@ -67,21 +67,25 @@ public class ApartmentServiceImpl implements ApartmentService {
 
   @Override
   public ApartmentResponse findById(Long id) {
-    Apartment apartment =  apartmentRepo.findById(id).orElseThrow(() -> {
+    Apartment apartment =   apartmentRepo.findById(id).orElseThrow(() -> {
       throw new NotFoundException(ConstantError.APARTMENT_NOT_FOUND + id);
     });
-    ApartmentResponse apartmentResponse = new ApartmentResponse();
-    apartmentResponse.setId(apartment.getId());
-    apartmentResponse.setApartmentCode(apartment.getCode());
-    apartmentResponse.setStatus(apartment.getStatus());
-    apartmentResponse.setArea(apartment.getArea());
-    List<PersonResponse> personList = personService.getPersonsActiveByApartmentId(apartment.getId());
-    apartmentResponse.setPersonInApartment(personList.size());
-    Person person = personRepo.findRepresentByApartmentId(apartment.getId()).orElseThrow(()-> {
-      throw new NotFoundException(ConstantError.PERSON_NOT_FOUND);
-    });
-    apartmentResponse.setRoomMaster(person.getFullName());
-    return apartmentResponse;
+    ApartmentResponse dto = new ApartmentResponse();
+    Optional<Contract> contract = contractRepo.findContractByApartmentId(apartment.getId());
+    Person person = null;
+    if (contract.isEmpty() == false) {
+      dto.setContractCode(contract.get().getCode());
+
+      person = contract.get().getPerson();
+      dto.setPersonInApartment(personRepo.countPersonByContractId(contract.get().getId()));
+    }
+    if(person != null)
+      dto.setRoomMaster(person.getFullName());
+    dto.setId(apartment.getId());
+    dto.setArea(apartment.getArea());
+    dto.setStatus(apartment.getStatus());
+    dto.setApartmentCode(apartment.getCode());
+    return dto;
   }
 
   @Override

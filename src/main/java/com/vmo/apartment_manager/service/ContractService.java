@@ -9,7 +9,7 @@ import java.util.List;
 public interface ContractService {
   ContractResponse add(ContractRequest contract) throws Exception;
   Contract update(Long id, Contract contract);
-  Contract findById(Long id);
+  ContractResponse findById(Long id);
   List<ContractResponse> getAllContractActive(Integer pageNo, Integer pageSize, String sortBy);
   Contract changeRepersent(long id, long newPresent);
   String changeAllStatusByIds(long[] ids);

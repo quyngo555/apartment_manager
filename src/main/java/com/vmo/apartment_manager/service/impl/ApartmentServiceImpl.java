@@ -12,14 +12,14 @@ import com.vmo.apartment_manager.repository.ContractRepository;
 import com.vmo.apartment_manager.repository.PersonRepository;
 import com.vmo.apartment_manager.service.ApartmentService;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 import com.vmo.apartment_manager.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -41,7 +41,6 @@ public class ApartmentServiceImpl implements ApartmentService {
   public List<ApartmentResponse> getAll(Integer pageNo, Integer pageSize, String sortBy) {
     Pageable paging = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy));
     List<Apartment> apartments = apartmentRepo.findAll(paging).getContent();
-
     List<ApartmentResponse> apartmentResponses = new ArrayList<>();
     for (Apartment apartment : apartments) {
       ApartmentResponse dto = new ApartmentResponse();
@@ -50,7 +49,6 @@ public class ApartmentServiceImpl implements ApartmentService {
       dto.setArea(apartment.getArea());
       if (contract.isEmpty() == false) {
         dto.setContractCode(contract.get().getCode());
-
         person = contract.get().getPerson();
         dto.setPersonInApartment(personRepo.countPersonByContractId(contract.get().getId()));
       }
@@ -63,6 +61,7 @@ public class ApartmentServiceImpl implements ApartmentService {
       apartmentResponses.add(dto);
     }
     return apartmentResponses;
+
   }
 
   @Override

@@ -59,8 +59,8 @@ public class PersonController {
   }
 
   @GetMapping("/represents/{id}/list-member")
-  public ResponseEntity<?> getPersonByApartmentCode(@RequestParam String apartmentCode){
-    return ResponseEntity.ok(personService.findPersonsByApartmentCode(apartmentCode));
+  public ResponseEntity<?> getPersonByRepresent(@RequestParam String apartmentCode){
+    return ResponseEntity.ok(personService.findPersonsByRepresent(apartmentCode));
   }
 
 @GetMapping("/persons/{id}")

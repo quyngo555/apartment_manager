@@ -14,4 +14,5 @@ public interface ApartmentService {
   List<ApartmentResponse> findApartmentByRepresent(String representName);
   int countApartmentInUse();
 
+
 }

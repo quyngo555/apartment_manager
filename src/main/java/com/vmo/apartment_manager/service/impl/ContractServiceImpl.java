@@ -92,10 +92,12 @@ public class ContractServiceImpl implements ContractService {
   }
 
   @Override
-  public Contract findById(Long id) {
-    return contractRepo.findById(id).orElseThrow(() -> {
+  public ContractResponse findById(Long id) {
+    Contract contract =  contractRepo.findById(id).orElseThrow(() -> {
       throw new NotFoundException(ConstantError.CONTRACT_NOT_FOUND + id);
     });
+    ContractResponse response = new ContractResponse(contract);
+    return response;
   }
 
   @Override

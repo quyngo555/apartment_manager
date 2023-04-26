@@ -23,7 +23,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class Person extends BaseEntity{
-
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
   @NotNull(message = "Name is mandatory")
   private String fullName;

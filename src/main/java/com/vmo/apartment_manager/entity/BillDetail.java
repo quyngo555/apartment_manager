@@ -26,7 +26,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class BillDetail extends BaseEntity {
 
-
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
   private Double subTotal;
 
   @NotNull(message = "Name is mandatory")

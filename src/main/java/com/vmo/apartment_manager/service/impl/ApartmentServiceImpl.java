@@ -6,6 +6,7 @@ import com.vmo.apartment_manager.entity.Apartment;
 import com.vmo.apartment_manager.entity.Contract;
 import com.vmo.apartment_manager.entity.Person;
 import com.vmo.apartment_manager.exception.NotFoundException;
+import com.vmo.apartment_manager.payload.response.PersonResponse;
 import com.vmo.apartment_manager.repository.ApartmentRepository;
 import com.vmo.apartment_manager.repository.ContractRepository;
 import com.vmo.apartment_manager.repository.PersonRepository;
@@ -13,6 +14,8 @@ import com.vmo.apartment_manager.service.ApartmentService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import com.vmo.apartment_manager.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +33,9 @@ public class ApartmentServiceImpl implements ApartmentService {
 
   @Autowired
   ContractRepository contractRepo;
+
+  @Autowired
+  PersonService personService;
 
   @Override
   public List<ApartmentResponse> getAll(Integer pageNo, Integer pageSize, String sortBy) {
@@ -60,10 +66,22 @@ public class ApartmentServiceImpl implements ApartmentService {
   }
 
   @Override
-  public Apartment findById(Long id) {
-    return apartmentRepo.findById(id).orElseThrow(() -> {
+  public ApartmentResponse findById(Long id) {
+    Apartment apartment =  apartmentRepo.findById(id).orElseThrow(() -> {
       throw new NotFoundException(ConstantError.APARTMENT_NOT_FOUND + id);
     });
+    ApartmentResponse apartmentResponse = new ApartmentResponse();
+    apartmentResponse.setId(apartment.getId());
+    apartmentResponse.setApartmentCode(apartment.getCode());
+    apartmentResponse.setStatus(apartment.getStatus());
+    apartmentResponse.setArea(apartment.getArea());
+    List<PersonResponse> personList = personService.getPersonsActiveByApartmentId(apartment.getId());
+    apartmentResponse.setPersonInApartment(personList.size());
+    Person person = personRepo.findRepresentByApartmentId(apartment.getId()).orElseThrow(()-> {
+      throw new NotFoundException(ConstantError.PERSON_NOT_FOUND);
+    });
+    apartmentResponse.setRoomMaster(person.getFullName());
+    return apartmentResponse;
   }
 
   @Override

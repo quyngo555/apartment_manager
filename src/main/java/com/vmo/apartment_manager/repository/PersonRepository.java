@@ -49,6 +49,10 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
       + "inner join Contract c on p.contractId = c.id where c.id = ?1")
   List<Person> findPersonByContractId(long id);
 
-
+  @Query(value = "select p from Person p " +
+          "inner join Contact c on c.person.id = p.id " +
+          "inner join Apartment a on a.id = c.apartment.id" +
+          "where a.id = ?1 and c.status = com.vmo.apartment_manager.entity.ContractStatus.ACTIVE")
+  Optional<Person> findRepresentByApartmentId(long apartmentId);
 
 }

@@ -26,7 +26,9 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ServiceFee extends BaseEntity {
-
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
   @NotNull(message = "Price is mandatory")
   private Double price;
 

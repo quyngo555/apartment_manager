@@ -48,7 +48,8 @@ public class ContractController {
   }
 
   @PutMapping("/contracts/{id}/change-represent")
-  public ResponseEntity<?> changeStatus(@PathVariable("id") long id, @RequestParam long representIdNew) {
+  public ResponseEntity<?> changeStatus(@PathVariable("id") long id,
+      @RequestParam long representIdNew) {
     return ResponseEntity.ok(contractService.changeRepersent(id, representIdNew));
   }
 
@@ -60,18 +61,16 @@ public class ContractController {
 
   @GetMapping("contracts/search-by-date")
   public ResponseEntity<?> getContractCreatedBetween(@RequestParam Date startDate,
-      @RequestParam Date endDate) {
-    return ResponseEntity.ok(contractService.findContractByCreatedBetween(startDate, endDate));
+      @RequestParam Date endDate, @RequestParam(defaultValue = "1") Integer pageNo,
+      @RequestParam(defaultValue = "10") Integer pageSize,
+      @RequestParam(defaultValue = "id")String sortBy) {
+    return ResponseEntity.ok(contractService.findContractByCreatedBetween(startDate, endDate, pageNo, pageSize, sortBy));
   }
 
   @GetMapping("/apartments/{id}/contract")
-  public ResponseEntity<?> getContractActiveByApartmentId(@PathVariable("id")long id){
+  public ResponseEntity<?> getContractActiveByApartmentId(@PathVariable("id") long id) {
     return ResponseEntity.ok(contractService.findContractByApartmentId(id));
   }
 
-  @GetMapping("/contracts/changeStatus")
-  public ResponseEntity<?> changeStatus(){
-    contractService.autoChangeStatus();
-    return ResponseEntity.noContent().build();
-  }
+
 }

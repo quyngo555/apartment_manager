@@ -25,7 +25,9 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 public class Contract extends BaseEntity{
-
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
   @NotNull(message = "Price apartment is mandatory")
   private double priceApartment;

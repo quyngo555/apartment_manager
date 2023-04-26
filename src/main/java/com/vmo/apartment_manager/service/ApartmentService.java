@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 
 public interface ApartmentService {
   List<ApartmentResponse> getAll(Integer pageNo, Integer pageSize, String sortBy);
-  Apartment findById(Long id);
+  ApartmentResponse findById(Long id);
   List<Apartment> getApartmentsAvailable();
   List<Apartment> getApartmentsUnAvailable();
   List<ApartmentResponse> findApartmentByName(String apartmentName, Integer pageNo, Integer pageSize, String sortBy);

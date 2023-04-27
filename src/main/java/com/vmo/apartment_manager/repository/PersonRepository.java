@@ -38,7 +38,7 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
   @Query(value = "select p from Person p "
       + "inner join Contract c on c.person.id = p.id "
       + "where c.status = com.vmo.apartment_manager.entity.ContractStatus.ACTIVE")
-  List<Person> findRepresentWithPagination(Pageable pageable);
+  Page<Person> findRepresentWithPagination(Pageable pageable);
 
 
   @Query(value = "select count(p) from Person p where p.contractId = ?1 and p.status = true")

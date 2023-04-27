@@ -33,7 +33,7 @@ public class PersonController {
     return ResponseEntity.ok(personService.findAll());
   }
   @PutMapping("/persons/{id}")
-  public ResponseEntity<?> update(@PathVariable("id") long id, @RequestBody Person person){
+  public ResponseEntity<?> update(@PathVariable("id") long id, @RequestBody PersonRequest person){
     return ResponseEntity.ok(personService.update(id, person));
   }
   @PutMapping("/persons/change-status")

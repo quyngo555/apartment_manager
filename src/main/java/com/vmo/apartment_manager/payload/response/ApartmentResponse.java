@@ -18,5 +18,19 @@ public class ApartmentResponse {
   private String apartmentCode;
   private Double area;
 
+  public ApartmentResponse(Apartment apartment, String roomMaster, String contractCode, int personInApartment) {
+    this.id = apartment.getId();
+    this.roomMaster = roomMaster;
+    this.contractCode = contractCode;
+    this.status = apartment.getStatus();
+    this.personInApartment = personInApartment;
+    this.apartmentCode = apartment.getCode();
+    this.area = apartment.getArea();
+  }
 
+  public ApartmentResponse(Apartment apartment) {
+    this.id = apartment.getId();
+    this.status = apartment.getStatus();
+    this.area = apartment.getArea();
+  }
 }

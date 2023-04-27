@@ -17,6 +17,7 @@ import java.util.*;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -101,12 +102,11 @@ public class ContractServiceImpl implements ContractService {
   }
 
   @Override
-  public List<ContractResponse> getAllContractActive(Integer pageNo, Integer pageSize,
-      String sortBy) {
+  public Page<ContractResponse> getAllContractActive(Integer pageNo, Integer pageSize,
+                                                     String sortBy) {
     Pageable paging = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy));
-    return contractRepo.findContractActiveWithPagination(paging).stream()
-        .map(ContractResponse::new)
-        .toList();
+    return contractRepo.findContractActiveWithPagination(paging)
+        .map(contract -> new ContractResponse(contract));
   }
 
   @Override

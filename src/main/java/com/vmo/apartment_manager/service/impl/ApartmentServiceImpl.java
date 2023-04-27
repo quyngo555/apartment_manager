@@ -38,29 +38,17 @@ public class ApartmentServiceImpl implements ApartmentService {
   PersonService personService;
 
   @Override
-  public List<ApartmentResponse> getAll(Integer pageNo, Integer pageSize, String sortBy) {
+  public Page<ApartmentResponse> getAll(Integer pageNo, Integer pageSize, String sortBy) {
     Pageable paging = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy));
-    List<Apartment> apartments = apartmentRepo.findAll(paging).getContent();
-    List<ApartmentResponse> apartmentResponses = new ArrayList<>();
-    for (Apartment apartment : apartments) {
-      ApartmentResponse dto = new ApartmentResponse();
-      Optional<Contract> contract = contractRepo.findContractByApartmentId(apartment.getId());
-      Person person = null;
-      dto.setArea(apartment.getArea());
-      if (contract.isEmpty() == false) {
-        dto.setContractCode(contract.get().getCode());
-        person = contract.get().getPerson();
-        dto.setPersonInApartment(personRepo.countPersonByContractId(contract.get().getId()));
-      }
-      if(person != null)
-        dto.setRoomMaster(person.getFullName());
-      dto.setId(apartment.getId());
-      dto.setStatus(apartment.getStatus());
-      dto.setApartmentCode(apartment.getCode());
-
-      apartmentResponses.add(dto);
-    }
-    return apartmentResponses;
+    return apartmentRepo.findAll(paging).map(apartment -> {
+     Optional<Contract> contract = contractRepo.findContractByApartmentId(apartment.getId());
+     if(contract.isEmpty()){
+       return new ApartmentResponse(apartment);
+     }
+     int personNum = personRepo.countPersonByContractId(contract.get().getId());
+     String roomMaster = contract.get().getPerson().getFullName();
+     return new ApartmentResponse(apartment, roomMaster, contract.get().getCode(), personNum);
+    });
 
   }
 
@@ -121,19 +109,15 @@ public class ApartmentServiceImpl implements ApartmentService {
   }
 
   public List<ApartmentResponse> findApartmentByRepresent(String representName) {
-    List<Person> representList = personRepo.findRepresentByName(representName);
-
     List<Apartment> apartments = new ArrayList<>();
-    for (Person p : representList) {
-      apartments.addAll(apartmentRepo.findByRepresentId(p.getId()));
-    }
+    personRepo.findRepresentByName(representName).stream()
+            .forEach(person -> apartments.addAll(apartmentRepo.findByRepresentId(person.getId())));
     List<ApartmentResponse> apartmentResponses = new ArrayList<>();
     for (Apartment apartment : apartments) {
       Optional<Contract> contract = contractRepo.findContractByApartmentId(apartment.getId());
 
       ApartmentResponse dto = new ApartmentResponse();
       if (contract.isEmpty() == false) {
-
         dto.setContractCode(contract.get().getCode());
         dto.setRoomMaster(contract.get().getPerson().getFullName());
         dto.setPersonInApartment(personRepo.countPersonByContractId(contract.get().getId()));

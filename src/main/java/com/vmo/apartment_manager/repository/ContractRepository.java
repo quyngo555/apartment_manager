@@ -5,6 +5,8 @@ import com.vmo.apartment_manager.entity.Person;
 import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -31,7 +33,7 @@ public interface ContractRepository extends JpaRepository<Contract, Long> {
   List<Contract> findContractActive();
 
   @Query(value = "select c from Contract c where c.status = com.vmo.apartment_manager.entity.ContractStatus.ACTIVE")
-  List<Contract> findContractActiveWithPagination(Pageable pageable);
+  Page<Contract> findContractActiveWithPagination(Pageable pageable);
 
   @Query(value = "select c from Contract c where c.createdDate between ?1 and ?2")
   List<Contract> findByCreatedDateBetweenDatesWithPagination(Date startDate, Date endDate, Pageable pageable);

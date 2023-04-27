@@ -10,11 +10,11 @@ import java.util.List;
 
 public interface PersonService {
   PersonResponse add(PersonRequest person);
-  PersonResponse update(Long id, Person person);
+  PersonResponse update(Long id, PersonRequest person);
   List<PersonResponse> getPersonsActiveByApartmentId(long id);
   String deletePersonsById(long[] ids);
   List<PersonResponse> getPersonByName(String namePerson);
-  List<PersonResponse> getRepresent(Integer pageNo, Integer pageSize, String sortBy);
+  Page<PersonResponse> getRepresent(Integer pageNo, Integer pageSize, String sortBy);
   List<Person> findAll();
   List<PersonResponse> findPersonsByRepresent(String apartmentCode);
   Person findById(long id);

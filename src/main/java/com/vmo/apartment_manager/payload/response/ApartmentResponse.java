@@ -30,6 +30,7 @@ public class ApartmentResponse {
 
   public ApartmentResponse(Apartment apartment) {
     this.id = apartment.getId();
+    this.apartmentCode = apartment.getCode();
     this.status = apartment.getStatus();
     this.area = apartment.getArea();
   }

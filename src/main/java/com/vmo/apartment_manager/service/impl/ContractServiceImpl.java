@@ -63,7 +63,7 @@ public class ContractServiceImpl implements ContractService {
     contract.setPriceApartment(contractRequest.getPriceApartment());
     contract.setStartDate(contractRequest.getStartDate());
     contract.setEndDate(contractRequest.getEndDate());
-    contract.setCode(contractRequest.getCode());
+    contract.setCode("HD0"+contractRepo.countContact());
     contract.setPerson(person);
     contractRepo.save(contract);
     if (contractRequest.getLiveHere()) {

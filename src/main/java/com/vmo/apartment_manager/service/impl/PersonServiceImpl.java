@@ -6,7 +6,6 @@ import com.vmo.apartment_manager.entity.Contract;
 import com.vmo.apartment_manager.entity.Person;
 import com.vmo.apartment_manager.exception.NotFoundException;
 import com.vmo.apartment_manager.payload.request.PersonRequest;
-import com.vmo.apartment_manager.payload.response.ContractResponse;
 import com.vmo.apartment_manager.payload.response.PersonResponse;
 import com.vmo.apartment_manager.repository.ApartmentRepository;
 import com.vmo.apartment_manager.repository.ContractRepository;
@@ -49,9 +48,11 @@ public class PersonServiceImpl implements PersonService {
     person1.setEmail(person.getEmail());
 
     if(person.getApartmentId() != null){
-      Apartment apartment = apartmentRepo.findById(person.getApartmentId()).get();
+      Apartment apartment = apartmentRepo.findById(person.getApartmentId()).orElseThrow(()->{
+        throw new NotFoundException(ConstantError.APARTMENT_NOT_FOUND);
+      });
       Optional<Contract> contract = contractRepo.findContractByApartmentId(apartment.getId());
-      if(contract.isEmpty() == false){
+      if(contract.isPresent()){
         person1.setContractId(contract.get().getId());
         person1.setStatus(true);
         personRepo.save(person1);
@@ -83,8 +84,10 @@ public class PersonServiceImpl implements PersonService {
     personRepo.save(person1);
     if(person1.getContractId() != null){
       person1.setStatus(person.getStatus());
-      Apartment apartment = null;
-      apartment = apartmentRepo.findApartmentByContractId(person1.getContractId()).get();
+      Apartment apartment = new Apartment();
+      apartment = apartmentRepo.findApartmentByContractId(person1.getContractId()).orElseThrow(()-> {
+        throw new NotFoundException(ConstantError.APARTMENT_NOT_FOUND);
+      });
       return new PersonResponse(person1, apartment.getCode());
     }else{
       return new PersonResponse(person1);
@@ -158,10 +161,18 @@ public class PersonServiceImpl implements PersonService {
   }
 
   @Override
-  public Person findById(long id) {
-    return personRepo.findById(id).orElseThrow(() -> {
+  public PersonRequest findById(long id) {
+    Person person =  personRepo.findById(id).orElseThrow(() -> {
       throw new NotFoundException(ConstantError.PERSON_NOT_FOUND + id);
     });
+    Apartment apartment = new Apartment();
+    if(person.getContractId() != null){
+      apartment = apartmentRepo.findApartmentByContractId(person.getContractId()).orElseThrow(()-> {
+        throw new NotFoundException(ConstantError.APARTMENT_NOT_FOUND);
+      });
+      return new PersonRequest(person, apartment.getId());
+    }
+    return new PersonRequest(person);
   }
 
 

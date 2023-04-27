@@ -22,10 +22,8 @@ public class PersonRequest {
 
   private String phone;
 
-  @Email
   private String email;
 
-  @Column(unique=true)
   private String cin;
 
   private Boolean gender;

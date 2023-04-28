@@ -2,6 +2,7 @@ package com.vmo.apartment_manager.controller;
 
 import com.vmo.apartment_manager.constant.ConstantError;
 import com.vmo.apartment_manager.entity.User;
+import com.vmo.apartment_manager.exception.BadRequestException;
 import com.vmo.apartment_manager.exception.NotFoundException;
 import com.vmo.apartment_manager.jwt.JwtTokenProvider;
 import com.vmo.apartment_manager.payload.request.LoginRequest;
@@ -42,7 +43,7 @@ public class AuthApi {
       String jwt = tokenProvider.generateToken((User) authentication.getPrincipal());
       return new LoginResponse(jwt);
     }catch (Exception e){
-      throw new NotFoundException(ConstantError.LOGIN_ERROR);
+      throw new BadRequestException(ConstantError.LOGIN_ERROR);
     }
 
 

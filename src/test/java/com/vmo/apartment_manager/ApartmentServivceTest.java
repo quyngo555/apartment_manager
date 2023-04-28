@@ -59,7 +59,7 @@ public class ApartmentServivceTest {
     Pageable paging = PageRequest.of(0, 2, Sort.by("id"));
     Apartment apartment1 = new Apartment(2l, "CT02", "CT02", 1000d, false, "good");
     when(apartmentRepo.findAll()).thenReturn(List.of(apartment1, apartment));
-    List<ApartmentResponse> list = apartmentService.getAll(1, 2, "id");
+    Page<ApartmentResponse> list = apartmentService.getAll(1, 2, "id");
     verify(apartmentRepo).findAll();
     Assertions.assertNotNull(list);
   }

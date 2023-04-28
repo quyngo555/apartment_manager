@@ -11,6 +11,7 @@ import lombok.Setter;
 public class BillRequest {
 
   private Date paidDate;
+  private Date termPayment;
   private String note;
   private Long apartmentId;
   List<BillDetail> billDetailList;

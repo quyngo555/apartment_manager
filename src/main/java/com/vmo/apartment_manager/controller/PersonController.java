@@ -5,6 +5,8 @@ import com.vmo.apartment_manager.payload.request.PersonRequest;
 import com.vmo.apartment_manager.service.PersonService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.sql.Date;
+
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +27,7 @@ public class PersonController {
   private PersonService personService;
 
   @PostMapping("/persons")
-  public ResponseEntity<?> add(@RequestBody PersonRequest person){
+  public ResponseEntity<?> add(@Valid  @RequestBody PersonRequest person){
     return ResponseEntity.ok(personService.add(person));
   }
   @GetMapping("/persons")

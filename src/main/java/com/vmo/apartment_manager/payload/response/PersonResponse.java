@@ -1,5 +1,6 @@
 package com.vmo.apartment_manager.payload.response;
 
+import com.vmo.apartment_manager.entity.Apartment;
 import com.vmo.apartment_manager.entity.Person;
 import java.sql.Date;
 import lombok.Getter;
@@ -16,10 +17,10 @@ public class PersonResponse {
   private String cin;
   private Boolean gender;
   private String carrer;
-  private String apartmentCode;
+  private Apartment apartment;
   private Boolean status;
 
-  public PersonResponse(Person person, String apartmentCode) {
+  public PersonResponse(Person person, Apartment apartment) {
     this.id = person.getId();
     this.fullName = person.getFullName();
     this.dob = person.getDob();
@@ -29,7 +30,7 @@ public class PersonResponse {
     this.status = person.getStatus();
     this.gender = person.getGender();
     this.carrer = person.getCarrer();
-    this.apartmentCode = apartmentCode;
+    this.apartment = apartment;
   }
 
   public PersonResponse(Person person) {
@@ -43,4 +44,5 @@ public class PersonResponse {
     this.gender = person.getGender();
     this.carrer = person.getCarrer();
   }
+
 }

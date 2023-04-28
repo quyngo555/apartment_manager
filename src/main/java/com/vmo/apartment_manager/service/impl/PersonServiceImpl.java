@@ -4,6 +4,7 @@ import com.vmo.apartment_manager.constant.ConstantError;
 import com.vmo.apartment_manager.entity.Apartment;
 import com.vmo.apartment_manager.entity.Contract;
 import com.vmo.apartment_manager.entity.Person;
+import com.vmo.apartment_manager.exception.DataIntegrityException;
 import com.vmo.apartment_manager.exception.NotFoundException;
 import com.vmo.apartment_manager.payload.request.PersonRequest;
 import com.vmo.apartment_manager.payload.response.PersonResponse;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,34 +38,38 @@ public class PersonServiceImpl implements PersonService {
 
   @Override
   public PersonResponse add(PersonRequest person) {
-    Person person1 = new Person();
+    try{
+      Person person1 = new Person();
+      person1.setStatus(false);
+      person1.setCin(person.getCin());
+      person1.setDob(person.getDob());
+      person1.setCarrer(person.getCarrer());
+      person1.setGender(person.getGender());
+      person1.setFullName(person.getFullName());
+      person1.setPhone(person.getPhone());
+      person1.setEmail(person.getEmail());
 
-    person1.setStatus(false);
-    person1.setCin(person.getCin());
-    person1.setDob(person.getDob());
-    person1.setCarrer(person.getCarrer());
-    person1.setGender(person.getGender());
-    person1.setFullName(person.getFullName());
-    person1.setPhone(person.getPhone());
-    person1.setEmail(person.getEmail());
-
-    if(person.getApartmentId() != null){
-      Apartment apartment = apartmentRepo.findById(person.getApartmentId()).orElseThrow(()->{
-        throw new NotFoundException(ConstantError.APARTMENT_NOT_FOUND);
-      });
-      Optional<Contract> contract = contractRepo.findContractByApartmentId(apartment.getId());
-      if(contract.isPresent()){
-        person1.setContractId(contract.get().getId());
-        person1.setStatus(true);
-        personRepo.save(person1);
-        return new PersonResponse(person1, apartment.getCode());
+      if(person.getApartmentId() != null){
+        Apartment apartment = apartmentRepo.findById(person.getApartmentId()).orElseThrow(()->{
+          throw new NotFoundException(ConstantError.APARTMENT_NOT_FOUND);
+        });
+        Optional<Contract> contract = contractRepo.findContractByApartmentId(apartment.getId());
+        if(contract.isPresent()){
+          person1.setContractId(contract.get().getId());
+          person1.setStatus(true);
+          personRepo.save(person1);
+          return new PersonResponse(person1, apartment);
+        }else{
+          personRepo.save(person1);
+        }
       }else{
-       personRepo.save(person1);
+        personRepo.save(person1);
       }
-    }else{
-      personRepo.save(person1);
+      return new PersonResponse(person1);
+    }catch (Exception e){
+      throw new DataIntegrityException(e.getMessage());
     }
-    return new PersonResponse(person1);
+
   }
 
   @Override
@@ -88,7 +94,7 @@ public class PersonServiceImpl implements PersonService {
       apartment = apartmentRepo.findApartmentByContractId(person1.getContractId()).orElseThrow(()-> {
         throw new NotFoundException(ConstantError.APARTMENT_NOT_FOUND);
       });
-      return new PersonResponse(person1, apartment.getCode());
+      return new PersonResponse(person1, apartment);
     }else{
       return new PersonResponse(person1);
     }
@@ -106,7 +112,7 @@ public class PersonServiceImpl implements PersonService {
 
     List<PersonResponse> personResponses = new ArrayList<>();
     for (Person person : personList) {
-        personResponses.add(new PersonResponse(person, apartment.getName()));
+        personResponses.add(new PersonResponse(person, apartment));
     }
     return personResponses;
   }
@@ -133,7 +139,7 @@ public class PersonServiceImpl implements PersonService {
       Apartment apartment = apartmentRepo.findApartmentByContractId(person.getContractId()).orElseThrow(()->{
         throw new NotFoundException(ConstantError.APARTMENT_NOT_FOUND);
       });
-      personResponses.add(new PersonResponse(person, apartment.getName()));
+      personResponses.add(new PersonResponse(person, apartment));
     }
     return personResponses;
   }
@@ -142,7 +148,7 @@ public class PersonServiceImpl implements PersonService {
   public Page<PersonResponse> getRepresent(Integer pageNo, Integer pageSize, String sortBy) {
     Pageable paging = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy));
     return contractRepo.findContractActiveWithPagination(paging)
-            .map(contract -> new PersonResponse(contract.getPerson(), contract.getApartment().getCode()));
+            .map(contract -> new PersonResponse(contract.getPerson(), contract.getApartment()));
   }
 
   @Override
@@ -161,7 +167,7 @@ public class PersonServiceImpl implements PersonService {
   }
 
   @Override
-  public PersonRequest findById(long id) {
+  public PersonResponse findById(long id) {
     Person person =  personRepo.findById(id).orElseThrow(() -> {
       throw new NotFoundException(ConstantError.PERSON_NOT_FOUND + id);
     });
@@ -170,9 +176,9 @@ public class PersonServiceImpl implements PersonService {
       apartment = apartmentRepo.findApartmentByContractId(person.getContractId()).orElseThrow(()-> {
         throw new NotFoundException(ConstantError.APARTMENT_NOT_FOUND);
       });
-      return new PersonRequest(person, apartment.getId());
+      return new PersonResponse(person, apartment);
     }
-    return new PersonRequest(person);
+    return new PersonResponse(person);
   }
 
 

@@ -42,9 +42,9 @@ public class ApartmentController {
     return ResponseEntity.ok(apartmentService.findApartmentByName(apartmentName, pageNo, pageSize, sortBy));
   }
 
-  @PostMapping("/search-by-represent")
-  public ResponseEntity<?> getApartmentByRepresentPerson(@RequestBody Person person){
-    return ResponseEntity.ok(apartmentService.findApartmentByRepresent(person.getFullName()));
+  @GetMapping("/search-by-represent")
+  public ResponseEntity<?> getApartmentByRepresent(@RequestParam String represent){
+    return ResponseEntity.ok(apartmentService.findApartmentByRepresent(represent));
   }
 
   @GetMapping("/count-apartment-occupied")

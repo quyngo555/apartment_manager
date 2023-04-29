@@ -124,7 +124,7 @@ public class BillServiceImpl implements BillService {
 
   @Override
   public List<BillResponse> findAll(Integer pageNo,Integer pageSize, String sortBy) {
-    Pageable paging = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy));
+    Pageable paging = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy).descending());
     return billRepo.findAll(paging).stream().map(BillResponse::new).toList();
 
   }

@@ -162,13 +162,11 @@ public class ContractServiceImpl implements ContractService {
 
 
   @Override
-  public List<ContractResponse> findContractByCreatedBetween(Date startDate, Date endDate,
+  public Page<ContractResponse> findContractByCreatedBetween(Date startDate, Date endDate,
       Integer pageNo, Integer pageSize, String sortBy) {
     Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy));
     return contractRepo.findByCreatedDateBetweenDatesWithPagination(startDate, endDate, pageable)
-        .stream()
-        .map(ContractResponse::new)
-        .toList();
+        .map(ContractResponse::new);
   }
 
   @Override

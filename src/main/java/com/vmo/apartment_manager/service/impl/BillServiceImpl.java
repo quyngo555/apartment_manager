@@ -6,6 +6,7 @@ import com.vmo.apartment_manager.entity.BillDetail;
 import com.vmo.apartment_manager.entity.Contract;
 import com.vmo.apartment_manager.entity.ServiceFee;
 import com.vmo.apartment_manager.entity.TypeService;
+import com.vmo.apartment_manager.exception.BadRequestException;
 import com.vmo.apartment_manager.exception.NotFoundException;
 import com.vmo.apartment_manager.payload.request.BillRequest;
 import com.vmo.apartment_manager.payload.response.BillResponse;
@@ -25,13 +26,16 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -119,13 +123,14 @@ public class BillServiceImpl implements BillService {
   }
 
   @Override
-  public List<BillResponse> findAll() {
-    return billRepo.findAll().stream().map(BillResponse::new).collect(Collectors.toList());
+  public List<BillResponse> findAll(Integer pageNo,Integer pageSize, String sortBy) {
+    Pageable paging = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy));
+    return billRepo.findAll(paging).stream().map(BillResponse::new).toList();
 
   }
 
   @Transactional(rollbackFor = {Exception.class, Throwable.class})
-  public void importExcel(InputStream is) {
+  public String importExcel(InputStream is) {
     try {
       LocalDate currentDate = LocalDate.now();
       int month = currentDate.getMonthValue();
@@ -226,9 +231,10 @@ public class BillServiceImpl implements BillService {
       }
 
       workbook.close();
+      return "Import data succedd.";
 
     } catch (IOException e) {
-      throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
+      throw new BadRequestException("fail to parse Excel file: " + e.getMessage());
     }
   }
 
@@ -278,7 +284,19 @@ public class BillServiceImpl implements BillService {
       workbook.write(out);
       return new ByteArrayInputStream(out.toByteArray());
     } catch (IOException e) {
-      throw new RuntimeException("fail to import data to Excel file: " + e.getMessage());
+      throw new BadRequestException("fail to import data to Excel file: " + e.getMessage());
+    }
+  }
+
+  @Override
+  public Page<BillResponse> findBillByCreatedBetween(Date startDate, Date endDate, Long apartmentId, Integer pageNo, Integer pageSize, String sortBy) {
+    Pageable paging = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy));
+    if(apartmentId != null){
+      return billRepo.findByCreatedDateBetweenDatesWithPagination(startDate, endDate, apartmentId, paging)
+              .map(BillResponse::new);
+    }else{
+      return billRepo.findByCreatedDateBetweenDatesWithPagination(startDate, endDate, paging)
+              .map(BillResponse::new);
     }
   }
 

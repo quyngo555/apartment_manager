@@ -40,8 +40,10 @@ public class BillController {
     return ResponseEntity.ok(billService.update(id, bill));
   }
   @GetMapping("/bills")
-  public ResponseEntity<?> getAll(){
-    return ResponseEntity.ok(billService.findAll());
+  public ResponseEntity<?> getAll(@RequestParam(defaultValue = "1") Integer pageNo,
+                                  @RequestParam(defaultValue = "10") Integer pageSize,
+                                  @RequestParam(defaultValue = "id") String sortBy){
+    return ResponseEntity.ok(billService.findAll(pageNo, pageSize, sortBy));
   }
 
   @GetMapping("/bills/{id}")
@@ -69,5 +71,12 @@ public class BillController {
         .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
         .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
         .body(file);
+  }
+
+  @GetMapping("bills/search")
+  public ResponseEntity<?> getBillBetweenDates(@RequestParam Date startDate, @RequestParam Date endDate, @RequestParam long apartmentId,@RequestParam(defaultValue = "1") Integer pageNo,
+                                               @RequestParam(defaultValue = "10") Integer pageSize,
+                                               @RequestParam(defaultValue = "id") String sortBy){
+    return ResponseEntity.ok(billService.findBillByCreatedBetween(startDate, endDate, apartmentId, pageNo, pageSize, sortBy));
   }
 }

@@ -27,7 +27,7 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
   List<Person> findAllByContractId(long contractId);
 
   @Query(value = "select p from Person p "
-      + "where p.fullName like %?1% and p.status = true")
+      + "where p.fullName like %?1% ")
   List<Person> findPersonByName(String namePerson);
 
   @Query(value = "select p from Person p "
@@ -45,7 +45,7 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
   int countPersonByContractId(long contractId);
 
   @Query(value = "select p from Person p "
-      + "inner join Contract c on p.contractId = c.id where c.id = ?1")
+      + "where p.contractId = ?1 and p.status = true")
   List<Person> findPersonByContractId(long id);
 
 

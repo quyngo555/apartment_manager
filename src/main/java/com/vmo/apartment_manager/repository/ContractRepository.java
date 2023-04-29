@@ -34,7 +34,7 @@ public interface ContractRepository extends JpaRepository<Contract, Long> {
   Page<Contract> findContractActiveWithPagination(Pageable pageable);
 
   @Query(value = "select c from Contract c where c.createdDate between ?1 and ?2")
-  List<Contract> findByCreatedDateBetweenDatesWithPagination(Date startDate, Date endDate, Pageable pageable);
+  Page<Contract> findByCreatedDateBetweenDatesWithPagination(Date startDate, Date endDate, Pageable pageable);
 
   @Query(value = "select c from Contract c "
       + "inner join Apartment a on c.apartment.id = a.id "

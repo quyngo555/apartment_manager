@@ -136,15 +136,12 @@ public class PersonServiceImpl implements PersonService {
     List<Person> personList = personRepo.findPersonByName(namePerson);
     List<PersonResponse> personResponses = new ArrayList<>();
     for (Person person : personList) {
-
-      Optional<Apartment> apartment = apartmentRepo.findApartmentByContractId(person.getContractId());
-      if(apartment.isPresent()){
+      if(person.getContractId() != null){
+        Optional<Apartment> apartment = apartmentRepo.findApartmentByContractId(person.getContractId());
         personResponses.add(new PersonResponse(person, apartment.get()));
       }else{
         personResponses.add(new PersonResponse(person));
       }
-
-
     }
     return personResponses;
   }

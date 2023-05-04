@@ -11,6 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class BillResponse implements Serializable {
+  private Long id;
   private Double total;
   private Boolean stauts;
   private Date paidDate;
@@ -21,6 +22,7 @@ public class BillResponse implements Serializable {
   private String createdBy;
 
   public BillResponse(Bill bill) {
+    this.id = bill.getId();
     this.createdBy = bill.getCreatedBy();
     this.total = bill.getTotal();
     this.stauts = bill.getStauts();

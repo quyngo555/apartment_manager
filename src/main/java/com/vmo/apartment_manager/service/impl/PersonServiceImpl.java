@@ -4,6 +4,7 @@ import com.vmo.apartment_manager.constant.ConstantError;
 import com.vmo.apartment_manager.entity.Apartment;
 import com.vmo.apartment_manager.entity.Contract;
 import com.vmo.apartment_manager.entity.Person;
+import com.vmo.apartment_manager.exception.BadRequestException;
 import com.vmo.apartment_manager.exception.DataIntegrityException;
 import com.vmo.apartment_manager.exception.NotFoundException;
 import com.vmo.apartment_manager.payload.request.PersonRequest;
@@ -12,9 +13,13 @@ import com.vmo.apartment_manager.repository.ApartmentRepository;
 import com.vmo.apartment_manager.repository.ContractRepository;
 import com.vmo.apartment_manager.repository.PersonRepository;
 import com.vmo.apartment_manager.service.PersonService;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -51,7 +56,7 @@ public class PersonServiceImpl implements PersonService {
 
       if(person.getApartmentId() != null){
         Apartment apartment = apartmentRepo.findById(person.getApartmentId()).orElseThrow(()->{
-          throw new NotFoundException(ConstantError.APARTMENT_NOT_FOUND);
+          throw new BadRequestException(ConstantError.APARTMENT_NOT_FOUND);
         });
         Optional<Contract> contract = contractRepo.findContractByApartmentId(apartment.getId());
         if(contract.isPresent()){
@@ -67,7 +72,7 @@ public class PersonServiceImpl implements PersonService {
       }
       return new PersonResponse(person1);
     }catch (Exception e){
-      throw new DataIntegrityException(e.getMessage());
+      throw new DataIntegrityException(e.getCause().getMessage());
     }
 
   }
@@ -75,14 +80,14 @@ public class PersonServiceImpl implements PersonService {
   @Override
   public PersonResponse update(Long id, PersonRequest person) {
     Person person1 = personRepo.findById(id).orElseThrow(() -> {
-      throw new NotFoundException(ConstantError.PERSON_NOT_FOUND + id);
+      throw new BadRequestException(ConstantError.PERSON_NOT_FOUND + id);
     });
     person1.setCarrer(person.getCarrer());
     person1.setCin(person.getCin());
     person1.setEmail(person.getEmail());
     person1.setDob(person.getDob());
     Contract contract = contractRepo.findContractByApartmentId(person.getApartmentId()).orElseThrow(()->{
-      throw new NotFoundException(ConstantError.CONTRACT_NOT_FOUND);
+      throw new BadRequestException(ConstantError.CONTRACT_NOT_FOUND);
     });
     person1.setContractId(contract.getId());
     person1.setFullName(person.getFullName());
@@ -92,7 +97,7 @@ public class PersonServiceImpl implements PersonService {
       person1.setStatus(person.getStatus());
       Apartment apartment = new Apartment();
       apartment = apartmentRepo.findApartmentByContractId(person1.getContractId()).orElseThrow(()-> {
-        throw new NotFoundException(ConstantError.APARTMENT_NOT_FOUND);
+        throw new BadRequestException(ConstantError.APARTMENT_NOT_FOUND);
       });
       return new PersonResponse(person1, apartment);
     }else{

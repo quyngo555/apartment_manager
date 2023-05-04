@@ -295,7 +295,9 @@ public class BillServiceImpl implements BillService {
       return billRepo.findByCreatedDateBetweenDatesWithPagination(startDate, endDate, paging)
               .map(BillResponse::new);
 
-    }else{
+    } else if ((startDate.equals("") || endDate.equals("")) && apartmentCode.equals("all") == false) {
+      return billRepo.findByApartmentCode(apartmentCode, paging).map(BillResponse::new);
+    } else{
       return billRepo.findByCreatedDateBetweenDatesWithPagination(startDate, endDate, apartmentCode, paging)
               .map(BillResponse::new);
     }

@@ -18,10 +18,16 @@ public interface BillRepository extends JpaRepository<Bill, Long> {
   @Query(value = "select b from Bill b " +
           "inner join Contract c on  c.id = b.contract.id " +
           "inner join Apartment a on a.id = c.apartment.id " +
-          "where b.createdDate between ?1 and ?2 and a.id = ?3")
-  Page<Bill> findByCreatedDateBetweenDatesWithPagination(Date startDate, Date endDate, String apartmentId, Pageable pageable);
+          "where b.createdDate between ?1 and ?2 and a.code = ?3")
+  Page<Bill> findByCreatedDateBetweenDatesWithPagination(Date startDate, Date endDate, String apartmentCode, Pageable pageable);
 
   @Query(value = "select b from Bill b " +
           "where b.createdDate between ?1 and ?2 ")
   Page<Bill> findByCreatedDateBetweenDatesWithPagination(Date startDate, Date endDate, Pageable pageable);
+
+  @Query(value = "select b from Bill b " +
+          "inner join Contract c on  c.id = b.contract.id " +
+          "inner join Apartment a on a.id = c.apartment.id " +
+          "where a.code = ?1")
+  Page<Bill> findByApartmentCode(String findByApartmentCode, Pageable pageable);
 }

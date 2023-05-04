@@ -14,8 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface BillService {
   Bill add(BillRequest bill);
-  Bill update(long id, Bill bill);
-  Bill findById(long id);
+  BillResponse update(long id, Bill bill);
+  BillResponse findById(long id);
   List<BillResponse> findAll(Integer pageNo,Integer pageSize, String sortBy);
   boolean hasExcelFormat(MultipartFile file);
   String importExcel(InputStream is);

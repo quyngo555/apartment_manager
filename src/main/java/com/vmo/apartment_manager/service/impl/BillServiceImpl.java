@@ -102,7 +102,7 @@ public class BillServiceImpl implements BillService {
   }
 
   @Override
-  public Bill update(long id, Bill bill) {
+  public BillResponse update(long id, Bill bill) {
     Bill bill1 = billRepo.findById(id).orElseThrow(() -> {
       throw new NotFoundException(ConstantError.BILL_NOT_FOUND + id);
     });
@@ -113,13 +113,15 @@ public class BillServiceImpl implements BillService {
     }
     bill.setId(id);
     bill.setTotal(total);
-    return billRepo.save(bill);
+    return new BillResponse(billRepo.save(bill));
   }
 
   @Override
-  public Bill findById(long id) {
-    Bill bill = billRepo.findById(id).get();
-    return billRepo.findById(id).get();
+  public BillResponse findById(long id) {
+    Bill bill = billRepo.findById(id).orElseThrow(()-> {
+      throw new NotFoundException(ConstantError.BILL_NOT_FOUND + id);
+    });
+    return new BillResponse(bill);
   }
 
   @Override
@@ -295,8 +297,6 @@ public class BillServiceImpl implements BillService {
       return billRepo.findByCreatedDateBetweenDatesWithPagination(startDate, endDate, paging)
               .map(BillResponse::new);
 
-    } else if ((startDate.equals("") || endDate.equals("")) && apartmentCode.equals("all") == false) {
-      return billRepo.findByApartmentCode(apartmentCode, paging).map(BillResponse::new);
     } else{
       return billRepo.findByCreatedDateBetweenDatesWithPagination(startDate, endDate, apartmentCode, paging)
               .map(BillResponse::new);

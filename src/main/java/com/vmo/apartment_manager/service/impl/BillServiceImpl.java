@@ -289,13 +289,14 @@ public class BillServiceImpl implements BillService {
   }
 
   @Override
-  public Page<BillResponse> findBillByCreatedBetween(Date startDate, Date endDate, Long apartmentId, Integer pageNo, Integer pageSize, String sortBy) {
+  public Page<BillResponse> findBillByCreatedBetween(Date startDate, Date endDate, String apartmentCode, Integer pageNo, Integer pageSize, String sortBy) {
     Pageable paging = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy));
-    if(apartmentId != null){
-      return billRepo.findByCreatedDateBetweenDatesWithPagination(startDate, endDate, apartmentId, paging)
-              .map(BillResponse::new);
-    }else{
+    if(apartmentCode.equals("all")){
       return billRepo.findByCreatedDateBetweenDatesWithPagination(startDate, endDate, paging)
+              .map(BillResponse::new);
+
+    }else{
+      return billRepo.findByCreatedDateBetweenDatesWithPagination(startDate, endDate, apartmentCode, paging)
               .map(BillResponse::new);
     }
   }

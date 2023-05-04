@@ -74,7 +74,7 @@ public class BillController {
   }
 
   @GetMapping("bills/search")
-  public ResponseEntity<?> getBillBetweenDates(@RequestParam Date startDate, @RequestParam Date endDate, @RequestParam long apartmentId,@RequestParam(defaultValue = "1") Integer pageNo,
+  public ResponseEntity<?> getBillBetweenDates(@RequestParam Date startDate, @RequestParam Date endDate, @RequestParam(defaultValue = "all") String apartmentId,@RequestParam(defaultValue = "1") Integer pageNo,
                                                @RequestParam(defaultValue = "10") Integer pageSize,
                                                @RequestParam(defaultValue = "id") String sortBy){
     return ResponseEntity.ok(billService.findBillByCreatedBetween(startDate, endDate, apartmentId, pageNo, pageSize, sortBy));

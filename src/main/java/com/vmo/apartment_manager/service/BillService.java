@@ -21,6 +21,6 @@ public interface BillService {
   String importExcel(InputStream is);
   ByteArrayInputStream exportExcel(Date startDate, Date endDate);
 
-  Page<BillResponse> findBillByCreatedBetween(Date startDate, Date endDate, Long apartmentId, Integer pageNo, Integer pageSize, String sortBy);
+  Page<BillResponse> findBillByCreatedBetween(Date startDate, Date endDate, String apartmentCode, Integer pageNo, Integer pageSize, String sortBy);
 
 }

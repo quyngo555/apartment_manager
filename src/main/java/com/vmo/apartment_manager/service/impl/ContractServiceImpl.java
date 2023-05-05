@@ -169,11 +169,15 @@ public class ContractServiceImpl implements ContractService {
 
   // find Contact between dates
   @Override
-  public Page<ContractResponse> findContractByCreatedBetween(Date startDate, Date endDate,
+  public Page<ContractResponse> findContractByCreatedBetween(Date startDate, Date endDate, String code,
       Integer pageNo, Integer pageSize, String sortBy) {
     Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy));
-    return contractRepo.findByCreatedDateBetweenDatesWithPagination(startDate, endDate, pageable)
+    if(code.equals("all"))
+      return contractRepo.findByCreatedDateBetweenDatesWithPagination(startDate, endDate, pageable)
         .map(ContractResponse::new);
+    else
+      return contractRepo.findByCreatedDateBetweenDatesWithPagination(startDate, endDate, code, pageable)
+              .map(ContractResponse::new);
   }
 
   // get contract by apartment id

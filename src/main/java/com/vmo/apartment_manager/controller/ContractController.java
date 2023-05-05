@@ -61,10 +61,10 @@ public class ContractController {
 
   @GetMapping("contracts/search-by-date")
   public ResponseEntity<?> getContractCreatedBetween(@RequestParam Date startDate,
-      @RequestParam Date endDate, @RequestParam(defaultValue = "1") Integer pageNo,
+      @RequestParam Date endDate, @RequestParam(defaultValue = "all") String code, @RequestParam(defaultValue = "1") Integer pageNo,
       @RequestParam(defaultValue = "10") Integer pageSize,
       @RequestParam(defaultValue = "id")String sortBy) {
-    return ResponseEntity.ok(contractService.findContractByCreatedBetween(startDate, endDate, pageNo, pageSize, sortBy));
+    return ResponseEntity.ok(contractService.findContractByCreatedBetween(startDate, endDate, code,  pageNo, pageSize, sortBy));
   }
 
   @GetMapping("/apartments/{id}/contract")

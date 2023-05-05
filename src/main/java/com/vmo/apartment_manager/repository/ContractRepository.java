@@ -1,5 +1,6 @@
 package com.vmo.apartment_manager.repository;
 
+import com.vmo.apartment_manager.entity.Bill;
 import com.vmo.apartment_manager.entity.Contract;
 import com.vmo.apartment_manager.entity.Person;
 import java.sql.Date;
@@ -35,6 +36,10 @@ public interface ContractRepository extends JpaRepository<Contract, Long> {
 
   @Query(value = "select c from Contract c where c.createdDate between ?1 and ?2")
   Page<Contract> findByCreatedDateBetweenDatesWithPagination(Date startDate, Date endDate, Pageable pageable);
+
+  @Query(value = "select c from Contract c " +
+          "where c.createdDate between ?1 and ?2 and c.code = ?3")
+  Page<Contract> findByCreatedDateBetweenDatesWithPagination(Date startDate, Date endDate, String code, Pageable pageable);
 
   @Query(value = "select c from Contract c "
       + "inner join Apartment a on c.apartment.id = a.id "

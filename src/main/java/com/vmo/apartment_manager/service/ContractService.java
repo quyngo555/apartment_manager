@@ -15,7 +15,7 @@ public interface ContractService {
   Page<ContractResponse> getAllContractActive(Integer pageNo, Integer pageSize, String sortBy);
   Contract changeRepersent(long id, long newPresent);
   String changeAllStatusByIds(long[] ids);
-  Page<ContractResponse> findContractByCreatedBetween(Date startDate, Date endDate, Integer pageNo, Integer pageSize, String sortBy);
+  Page<ContractResponse> findContractByCreatedBetween(Date startDate, Date endDate, String code, Integer pageNo, Integer pageSize, String sortBy);
   ContractResponse findContractByApartmentId(long apartmentId);
   void checkContractExpired();
 }

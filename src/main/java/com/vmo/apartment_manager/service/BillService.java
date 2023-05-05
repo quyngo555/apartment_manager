@@ -16,7 +16,7 @@ public interface BillService {
   Bill add(BillRequest bill);
   BillResponse update(long id, Bill bill);
   BillResponse findById(long id);
-  List<BillResponse> findAll(Integer pageNo,Integer pageSize, String sortBy);
+  Page<BillResponse> findAll(Integer pageNo,Integer pageSize, String sortBy);
   boolean hasExcelFormat(MultipartFile file);
   String importExcel(InputStream is);
   ByteArrayInputStream exportExcel(Date startDate, Date endDate);

@@ -16,11 +16,13 @@ public class ServiceFeeServiceImpl implements ServiceFeeService {
   @Autowired
   ServiceFeeRepository serviceFeeRepo;
 
+  // add service
   @Override
   public ServiceFeeResponse add(ServiceFee serviceFee) {
     return new ServiceFeeResponse(serviceFeeRepo.save(serviceFee));
   }
 
+  // update service
   @Override
   public ServiceFeeResponse update(long id, ServiceFee serviceFee) {
     ServiceFee serviceFeeOld = serviceFeeRepo.findById(id).orElseThrow(() -> {
@@ -30,11 +32,13 @@ public class ServiceFeeServiceImpl implements ServiceFeeService {
     return  new ServiceFeeResponse(serviceFeeRepo.save(serviceFee));
   }
 
+  // get all service
   @Override
   public List<ServiceFee> getAll() {
     return serviceFeeRepo.findAll();
   }
 
+  // get service by id
   @Override
   public ServiceFeeResponse findById(long id) {
     ServiceFee serviceFee = serviceFeeRepo.findById(id).orElseThrow(() ->{
@@ -43,6 +47,7 @@ public class ServiceFeeServiceImpl implements ServiceFeeService {
     return new ServiceFeeResponse(serviceFee);
   }
 
+  // delete service by id
   @Override
   public void deleteById(long id) {
     ServiceFee serviceFee = serviceFeeRepo.findById(id).orElseThrow(() ->{

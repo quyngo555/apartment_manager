@@ -64,6 +64,7 @@ public class BillServiceImpl implements BillService {
   @Autowired
   BillDetailService billDetailService;
 
+  // add bill
   @Override
   @Transactional(rollbackFor = {Exception.class, Throwable.class})
   public Bill add(BillRequest bill) {
@@ -101,6 +102,7 @@ public class BillServiceImpl implements BillService {
     return bill1;
   }
 
+  // update bill
   @Override
   public BillResponse update(long id, Bill bill) {
     Bill bill1 = billRepo.findById(id).orElseThrow(() -> {
@@ -116,6 +118,7 @@ public class BillServiceImpl implements BillService {
     return new BillResponse(billRepo.save(bill));
   }
 
+  // get bill by id
   @Override
   public BillResponse findById(long id) {
     Bill bill = billRepo.findById(id).orElseThrow(()-> {
@@ -124,6 +127,7 @@ public class BillServiceImpl implements BillService {
     return new BillResponse(bill);
   }
 
+  // get all bill
   @Override
   public List<BillResponse> findAll(Integer pageNo,Integer pageSize, String sortBy) {
     Pageable paging = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy).descending());
@@ -131,6 +135,7 @@ public class BillServiceImpl implements BillService {
 
   }
 
+  // import bill by excel
   @Transactional(rollbackFor = {Exception.class, Throwable.class})
   public String importExcel(InputStream is) {
     try {
@@ -240,6 +245,7 @@ public class BillServiceImpl implements BillService {
     }
   }
 
+  // check format file
   public boolean hasExcelFormat(MultipartFile file) {
 
     if (!TYPE.equals(file.getContentType())) {
@@ -249,6 +255,7 @@ public class BillServiceImpl implements BillService {
     return true;
   }
 
+  // export bills to excel
   @Override
   public ByteArrayInputStream exportExcel(Date startDate, Date endDate) {
 
@@ -290,6 +297,7 @@ public class BillServiceImpl implements BillService {
     }
   }
 
+  // get bill created between dates
   @Override
   public Page<BillResponse> findBillByCreatedBetween(Date startDate, Date endDate, String apartmentCode, Integer pageNo, Integer pageSize, String sortBy) {
     Pageable paging = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy));
@@ -303,6 +311,7 @@ public class BillServiceImpl implements BillService {
     }
   }
 
+  // send bill
   @Scheduled(cron = "0 15 10 ? * 6L") // Run at 10:15 on the last Friday of the month
   public void sendBill() {
     List<Bill> bills = billRepo.findBillUnPaid();

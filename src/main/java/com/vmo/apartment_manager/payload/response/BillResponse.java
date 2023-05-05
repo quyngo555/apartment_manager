@@ -3,7 +3,7 @@ package com.vmo.apartment_manager.payload.response;
 import com.vmo.apartment_manager.entity.Bill;
 import com.vmo.apartment_manager.entity.BillDetail;
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,7 +29,7 @@ public class BillResponse implements Serializable {
     this.stauts = bill.getStauts();
     this.paidDate = bill.getPaidDate();
     this.note = bill.getNote();
-    this.createdDate = bill.getPaidDate();
+    this.createdDate = bill.getCreatedDate();
     this.billDetails = bill.getBillDetailList().stream().map(BillDetailResponse::new).toList();
     this.apartmentName = bill.getContract().getApartment().getName();
   }

@@ -27,6 +27,7 @@ public class EmailServiceImpl implements EmailService {
   @Autowired
   private JavaMailSender javaMailSender;
 
+  // send bill
   @Override
   public String sendBill(Bill bill1) {
     try{
@@ -54,6 +55,7 @@ public class EmailServiceImpl implements EmailService {
 
 
 
+  // create  content
   public String getContent(Bill bill){
     Date date = new Date();
     int i = 1;

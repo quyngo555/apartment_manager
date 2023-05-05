@@ -41,6 +41,7 @@ public class PersonServiceImpl implements PersonService {
   ContractRepository contractRepo;
 
 
+  // add person
   @Override
   public PersonResponse add(PersonRequest person) {
     try{
@@ -77,6 +78,7 @@ public class PersonServiceImpl implements PersonService {
 
   }
 
+  // update person
   @Override
   public PersonResponse update(Long id, PersonRequest person) {
     Person person1 = personRepo.findById(id).orElseThrow(() -> {
@@ -105,6 +107,7 @@ public class PersonServiceImpl implements PersonService {
     }
   }
 
+  // get person active by apartment id
   @Override
   public List<PersonResponse> getPersonsActiveByApartmentId(long id) {
     Apartment apartment = apartmentRepo.findById(id).orElseThrow(() -> {
@@ -123,7 +126,7 @@ public class PersonServiceImpl implements PersonService {
   }
 
 
-
+  // change status person by id
   @Override
   public String deletePersonsById(long[] ids) {
     for (long id : ids) {
@@ -136,6 +139,7 @@ public class PersonServiceImpl implements PersonService {
     return "Delete succedd!";
   }
 
+  // get person by name
   @Override
   public List<PersonResponse> getPersonByName(String namePerson) {
     List<Person> personList = personRepo.findPersonByName(namePerson);
@@ -152,6 +156,7 @@ public class PersonServiceImpl implements PersonService {
     return personResponses;
   }
 
+  // get represent
   @Override
   public Page<PersonResponse> getRepresent(Integer pageNo, Integer pageSize, String sortBy) {
     Pageable paging = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy));
@@ -159,11 +164,13 @@ public class PersonServiceImpl implements PersonService {
             .map(contract -> new PersonResponse(contract.getPerson(), contract.getApartment()));
   }
 
+  // get all person
   @Override
   public List<Person> findAll() {
     return personRepo.findAll();
   }
 
+  // get persons by represent
   @Override
   public List<PersonResponse> findPersonsByRepresent(String apartmentCode) {
     Contract contract = contractRepo.findContractByApartmentCode(apartmentCode).orElseThrow(() ->{
@@ -174,6 +181,7 @@ public class PersonServiceImpl implements PersonService {
             .toList();
   }
 
+  // get person by id
   @Override
   public PersonResponse findById(long id) {
     Person person =  personRepo.findById(id).orElseThrow(() -> {

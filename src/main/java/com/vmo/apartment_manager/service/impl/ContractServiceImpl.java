@@ -37,6 +37,7 @@ public class ContractServiceImpl implements ContractService {
   @Autowired
   PersonRepository personRepo;
 
+  // add contract
   @Override
   @Transactional(rollbackFor = {Exception.class, Throwable.class})
   public ContractResponse add(ContractRequest contractRequest) throws Exception {
@@ -74,6 +75,7 @@ public class ContractServiceImpl implements ContractService {
     return new ContractResponse(contract);
   }
 
+  // update contract
   @Override
   public Contract update(Long id, Contract contract) {
     Contract contract1 = contractRepo.findById(id).orElseThrow(() -> {
@@ -92,6 +94,7 @@ public class ContractServiceImpl implements ContractService {
     return contract;
   }
 
+  // get contract by id
   @Override
   public ContractResponse findById(Long id) {
     Contract contract =  contractRepo.findById(id).orElseThrow(() -> {
@@ -101,6 +104,7 @@ public class ContractServiceImpl implements ContractService {
     return response;
   }
 
+  // get contract active
   @Override
   public Page<ContractResponse> getAllContractActive(Integer pageNo, Integer pageSize,
                                                      String sortBy) {
@@ -109,6 +113,7 @@ public class ContractServiceImpl implements ContractService {
         .map(contract -> new ContractResponse(contract));
   }
 
+  // change represent
   @Override
   public Contract changeRepersent(long id, long newPresent) {
     Contract contractOld = contractRepo.findById(id).orElseThrow(() -> {
@@ -144,6 +149,7 @@ public class ContractServiceImpl implements ContractService {
     return contractNew;
   }
 
+  // change status of contract
   @Override
   @Transactional(rollbackFor = {Exception.class, Throwable.class})
   public String changeAllStatusByIds(long[] ids) {
@@ -161,6 +167,7 @@ public class ContractServiceImpl implements ContractService {
   }
 
 
+  // find Contact between dates
   @Override
   public Page<ContractResponse> findContractByCreatedBetween(Date startDate, Date endDate,
       Integer pageNo, Integer pageSize, String sortBy) {
@@ -169,6 +176,7 @@ public class ContractServiceImpl implements ContractService {
         .map(ContractResponse::new);
   }
 
+  // get contract by apartment id
   @Override
   public ContractResponse findContractByApartmentId(long apartmentId) {
     Contract contract = contractRepo.findContractByApartmentId(apartmentId).orElseThrow(() -> {
@@ -177,6 +185,7 @@ public class ContractServiceImpl implements ContractService {
     return new ContractResponse(contract);
   }
 
+  // auto change status contract
   @Scheduled(cron = "0 10 * ? * ?") // Run at 10h on 01th of month
   public void checkContractExpired() {
     List<Contract> contracts = contractRepo.findContractActive();

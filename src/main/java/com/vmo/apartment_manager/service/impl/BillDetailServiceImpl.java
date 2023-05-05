@@ -27,6 +27,8 @@ public class BillDetailServiceImpl implements BillDetailService {
 
   @Autowired
   BillRepository billRepo;
+
+  // add billDetail
   @Override
   public BillDetailResponse add(BillDetail billDetail) {
     ServiceFee serviceFee = serviceFeeRepo.findById(billDetail.getServiceFee().getId()).orElseThrow(() ->{
@@ -44,6 +46,7 @@ public class BillDetailServiceImpl implements BillDetailService {
     return new BillDetailResponse(billDetail);
   }
 
+  // update billDetail
   @Override
   public BillDetailResponse update(long id, BillDetail billDetail) {
     BillDetail billDetail1 = billDetailRepo.findById(id).orElseThrow(() -> {
@@ -62,7 +65,7 @@ public class BillDetailServiceImpl implements BillDetailService {
   }
 
 
-
+  // get billDetail by id
   @Override
   public BillDetailResponse findById(long id) {
     BillDetail billDetail = billDetailRepo.findById(id).orElseThrow(() -> {
@@ -71,6 +74,7 @@ public class BillDetailServiceImpl implements BillDetailService {
     return new BillDetailResponse(billDetail);
   }
 
+  // get all billDetail
   @Override
   public List<BillDetailResponse> getAll() {
     return billDetailRepo.findAll().stream()

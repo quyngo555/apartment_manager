@@ -5,6 +5,7 @@ import com.vmo.apartment_manager.entity.Apartment;
 import com.vmo.apartment_manager.entity.Contract;
 import com.vmo.apartment_manager.entity.ContractStatus;
 import com.vmo.apartment_manager.entity.Person;
+import com.vmo.apartment_manager.exception.BadRequestException;
 import com.vmo.apartment_manager.exception.NotFoundException;
 import com.vmo.apartment_manager.payload.request.ContractRequest;
 import com.vmo.apartment_manager.payload.response.ContractResponse;
@@ -167,17 +168,12 @@ public class ContractServiceImpl implements ContractService {
   }
 
 
-  // find Contact between dates
-  @Override
-  public Page<ContractResponse> findContractByCreatedBetween(Date startDate, Date endDate, String code,
-      Integer pageNo, Integer pageSize, String sortBy) {
-    Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy));
-    if(code.equals("all"))
-      return contractRepo.findByCreatedDateBetweenDatesWithPagination(startDate, endDate, pageable)
-        .map(ContractResponse::new);
-    else
-      return contractRepo.findByCreatedDateBetweenDatesWithPagination(startDate, endDate, code, pageable)
-              .map(ContractResponse::new);
+  // find Contact by code
+  public ContractResponse findContractByCode(String code){
+    Contract contract = contractRepo.findContractByCode(code).orElseThrow(()->{
+      throw new BadRequestException(ConstantError.CONTRACT_NOT_FOUND);
+    });
+    return new ContractResponse(contract);
   }
 
   // get contract by apartment id
